@@ -1,0 +1,43 @@
+<!DOCTYPE>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,minimum-scale=0.5,maximum-scale=0.5,user-scalable=no"/>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <title>1,2,3，木头人！</title>
+
+    <link rel="stylesheet" href="/style/index.css">
+</head>
+
+<body>
+
+<div id='qrcode' style='position:absolute;'>
+    <img src='https://chart.googleapis.com/chart?chs=230x230&cht=qr&chl=http://192.168.2.8:8888/touch.html'>
+</div>
+<div id="center" class="center">
+    <div id="bg" class="allbg"></div>
+    <canvas id="canvas" width=640 height=960 class="allbg">
+        <p style='text-align: center;margin: 30px 0;'>
+            对不起暂时不能支持你的浏览器！！！
+        </p>
+    </canvas>
+    <audio id="music" src="/music/bg.aac" autoplay="true" loop="true">
+    </audio>
+<!--
+    <script src='/script/cfg.js'></script>
+
+    -->
+    <script src='/easeljs/lib/easeljs-0.4.2.min.js'></script>
+    <script src='/script/index.js'></script>
+    <!--
+    <script src='/script/socket.io.js'></script>
+
+        <script src='/script/active.js'></script>
+    -->
+    <script src='/script/face.js'></script>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+body,html{margin: 0;padding:0;background:#333;}
+
+#canvas{
+    -webkit-user-select:none;
+}
+
+#bg{
+    background: white;
+        width: 100%;
+        height:100%;
+        -webkit-user-select:none;
+}
+
+.allbg{
+    position: absolute;
+}
+
+.center {
+    overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+}
