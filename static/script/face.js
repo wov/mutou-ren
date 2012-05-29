@@ -2,7 +2,6 @@
 var imgsrc = [
         "monsterARun",
         "monsterAIdle",
-        "gapp",
         "hongxing",
         "wood_1s_b",
         "wood_1s_f",
