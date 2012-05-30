@@ -543,15 +543,11 @@ function overWood(n){
 
 //状态函数
 function tick() {
-
     for(var n=0;n<3;n++){
         if(woodMan[n].over){
             showWood(n, getWoodParam(n, "dis"));
         }
     }
-
-
-
 
 
 
