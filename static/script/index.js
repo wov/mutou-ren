@@ -37,33 +37,63 @@ var clickAreaRecord = [];
 function initWooder(){
     var d_canvas = document.getElementById('canvas');
 
-    d_canvas.addEventListener('touchstart',function(e){
+
+    if("ontouchstart" in window){
+        d_canvas.addEventListener('touchstart',function(e){
 //        touchList = touchList || [];
-        var point  = {};
-        point.x = e.pageX;
-        point.y = e.pageY;
+            var point  = {};
+            point.x = e.pageX;
+            point.y = e.pageY;
 
-        var clickArea;
+            var clickArea;
 
-        if(point.x > d_canvas.width/2){
-            clickArea = 'right';
-        }else{
-            clickArea = 'left';
-        }
+            if(point.x > d_canvas.width/2){
+                clickArea = 'right';
+            }else{
+                clickArea = 'left';
+            }
 
-        if(clickAreaRecord.length === 0){
-            clickAreaRecord.push(clickArea);
-        }else if(clickAreaRecord.length === 1){
-            if(clickAreaRecord[0] !== clickArea){
-                //发送一个点击信息。
+            if(clickAreaRecord.length === 0){
+                clickAreaRecord.push(clickArea);
+            }else if(clickAreaRecord.length === 1){
+                if(clickAreaRecord[0] !== clickArea){
+                    //发送一个点击信息。
 //                console.log(Role.id);
-                socket.emit('walk',{'roleId' : Role.id});
+                    socket.emit('walk',{'roleId' : Role.id});
+                    clickAreaRecord = [];
+                }
+            }else{
                 clickAreaRecord = [];
             }
-        }else{
-            clickAreaRecord = [];
-        }
-    },false);
+        },false);
+    }else{
+
+        document.onkeypress = function(e){
+            var clickArea;
+            switch(e.charCode){
+                case 97:
+                    clickArea = 'left';
+                    break;
+                case 100:
+                    clickArea = 'right';
+                    break;
+            }
+
+            if(clickAreaRecord.length === 0){
+                clickAreaRecord.push(clickArea);
+            }else if(clickAreaRecord.length === 1){
+                if(clickAreaRecord[0] !== clickArea){
+                    //发送一个点击信息。
+//                console.log(Role.id);
+                    socket.emit('walk',{'roleId' : Role.id});
+                    clickAreaRecord = [];
+                }
+            }else{
+                clickAreaRecord = [];
+            }
+        };
+
+    }
 }
 
 function initWatcher(){
