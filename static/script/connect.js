@@ -40,6 +40,7 @@ function connectSocket(){
             if(!!_data.collection.watcher){
                 if(Role.currentSessionID && Role.currentSessionID == _data.collection.watcher.session){
                     Role.id = -1;
+                    Role.current = 'boss';
                 }
                 addBoss();
                 //TODO:更新boss当前状态。
@@ -49,28 +50,36 @@ function connectSocket(){
                 for(var n=0;n<_data.collection.wooder.length;n++){
                     if(Role.currentSessionID && Role.currentSessionID == _data.collection.wooder[n].session){
                         Role.id = n+1;
+                        Role.current = 'wooder';
                     }
                     addWood(n);
+                    //更新wooder的位置。
                     jumpWood(n,_data.collection.wooder[n].position);
                 }
             }
         }
+
+        switchRole();
+
     });
 
     //connect the server success.
     socket.on('success',function(data){
+//        console.log('');
+
+
         if(data === 'noInit'){
             console.log('can not join the game! sorry');
             return;
         }
         if(data === '-1'){
-            console.log('people are overload');
+            alert('房间人数已满。');
             return;
         }
 
         if(data.id && data.id == -1){
             addBoss();
-            Role.current = 'watcher';
+            Role.current = 'boss';
             socket.on('afterCooling',function(){
                 showDraw123();
             });
@@ -80,6 +89,9 @@ function connectSocket(){
             addWood(~~data.roleId - 1);
             Role.current = 'wooder';
             Role.id = ~~data.roleId;
+
+
+
         }
 
 
