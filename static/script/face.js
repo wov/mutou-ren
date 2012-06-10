@@ -1,13 +1,15 @@
 //事先加载好图片
-var canvas,
-    stage,
-    w,
-    h;
+var canvas, stage, w, h;
 
 var woodManId = 0,
     woodManNum = 3,
     woodMan = {},
     bossMan,
+    scene = {
+        main : null,
+        enter : null,
+        win : null
+    },
     bossState = "back",
     bossHasInit = false,
     hasInitDraw = false;
@@ -74,6 +76,68 @@ function initDraw(){
 
 
 function drawMap(){
+    for(name in scene){
+        scene[name] = new Container();
+        scene[name].visible = false;
+        stage.addChild(scene[name]);
+    }
+
+    prepareScene();
+
+    Ticker.addListener(window);
+    Ticker.useRAF = true;
+    // Best Framerate targeted (60 FPS)
+    Ticker.setInterval(17);
+
+}
+
+
+function prepareScene(){
+
+
+    //<<---------enter
+
+    //enter------------>>
+
+
+    //<<-------------win
+    var bg = new SpriteSheet({
+        // image to use
+        images: [img.win_bg],
+        // width, height & registration point of each sprite
+        frames: {width: 640, height: 960, regX: 0, regY: 0},
+        animations: {
+            idle: [0, 1, "idle", 32]
+        }
+    });
+
+    var bfAnim = new BitmapAnimation(bg);
+    bfAnim.gotoAndPlay("idle");
+    scene.win.addChild(bfAnim);
+
+
+    scene.win.bossMan = new Bitmap(bossMan.img.big);
+    scene.win.bossMan.regX = 250;
+    scene.win.bossMan.regY = 250;
+    scene.win.bossMan.x = 320;
+    scene.win.bossMan.y = 480;
+    scene.win.addChild(scene.win.bossMan);
+    scene.win.bossMan.visible = false;
+
+    scene.win.woodMan = [];
+    for(var n = 0, nmax = woodManNum; n<nmax; n++){
+        scene.win.woodMan[n] = new Bitmap(woodMan[n].img.big);
+        scene.win.woodMan[n].regX = 250;
+        scene.win.woodMan[n].regY = 250;
+        scene.win.woodMan[n].x = 320;
+        scene.win.woodMan[n].y = 480;
+        scene.win.addChild(scene.win.woodMan[n]);
+        scene.win.woodMan[n].visible = false;
+    }
+    //win--------->>
+
+
+    //<<-------------main
     var bg = new SpriteSheet({
         // image to use
         images: [img.hongxing],
@@ -85,17 +149,23 @@ function drawMap(){
     });
 
     var bfAnim = new BitmapAnimation(bg);
+
     bfAnim.gotoAndPlay("idle");
-    stage.addChild(bfAnim);
+    scene.main.addChild(bfAnim);
+    //main-------------->>
 
 
-    Ticker.addListener(window);
-    Ticker.useRAF = true;
-    // Best Framerate targeted (60 FPS)
-    Ticker.setInterval(17);
+}
 
-//    addBoss();
 
+
+function showScene(sName){
+    if(scene[sName]){
+        for(name in scene){
+            scene[name].visible = false;
+        }
+        scene[sName].visible = true;
+    }
 }
 
 function addBoss(){
@@ -113,7 +183,7 @@ function addBoss(){
     var bossBackAnim = new BitmapAnimation(boss);
     bossMan.back = bossBackAnim;
     bossBackAnim.gotoAndPlay("idle");
-    stage.addChild(bossBackAnim);
+    scene.main.addChild(bossBackAnim);
     //bossBackAnim.shadow = new Shadow("#454", 0, 0, 4);
     bossBackAnim.x = 320;
     bossBackAnim.y = 225;
@@ -128,7 +198,7 @@ function addBoss(){
     bossMan.side.y = 225;
     bossMan.side.x = 320;
     man.visible = false;
-    stage.addChild(man);
+    scene.main.addChild(man);
 
     var faceman = new Bitmap(bossMan.img.small_face);
     bossMan.face = faceman;
@@ -138,7 +208,7 @@ function addBoss(){
     bossMan.face.y = 225;
     bossMan.face.x = 320;
     faceman.visible = false;
-    stage.addChild(faceman);
+    scene.main.addChild(faceman);
 
     bossHasInit = true;
 }
@@ -199,8 +269,8 @@ function addWood(n){
 
     woodMan[n].dis = 0;
 
-    stage.addChild(backman);
-    stage.addChild(man);
+    scene.main.addChild(backman);
+    scene.main.addChild(man);
 }
 
 
@@ -399,7 +469,7 @@ function showDraw123(){
                     }
                 }
             })(n);
-            stage.addChild(s);
+            scene.main.addChild(s);
         }
     }
     else{
@@ -457,42 +527,19 @@ function checkIfClickAll(){
     return all;
 }
 
-function showWin(n){
-
-
-    var bg = new SpriteSheet({
-            // image to use
-            images: [img.win_bg],
-            // width, height & registration point of each sprite
-            frames: {width: 640, height: 960, regX: 0, regY: 0},
-            animations: {
-                idle: [0, 1, "idle", 32]
-            }
-        });
-
-        var bfAnim = new BitmapAnimation(bg);
-        bfAnim.gotoAndPlay("idle");
-        stage.addChild(bfAnim);
-    if(n === "boss"){
-        var man = new Bitmap(bossMan.img.big);
-            man.regX = 250;
-            man.regY = 250;
-            man.x = 320;
-            man.y = 480;
-            stage.addChild(man);
+function showWin(man){
+    scene.win.bossMan.visible = false;
+    for(var n = 0, nmax = woodManNum; n<nmax; n++){
+        scene.win.woodMan[n].visible = false;
+    }
+    if(man === "boss"){
+        scene.win.bossMan.visible = true;
     }
     else{
-
-        var man = new Bitmap(woodMan[n].img.big);
-            man.regX = 250;
-            man.regY = 250;
-            man.x = 320;
-            man.y = 480;
-            stage.addChild(man);
+        scene.win.woodMan[man].visible = true;
     }
 
 
-    document.getElementById("music").src = "/music/cheer.aac";
 }
 
 function overWood(n){
@@ -507,10 +554,6 @@ function tick() {
             showWood(n, getWoodParam(n, "dis"));
         }
     }
-
-
-
-
     ontick();
     // update the stage:
     stage.update();

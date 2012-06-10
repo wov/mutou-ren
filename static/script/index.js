@@ -41,7 +41,7 @@ window.addEventListener('load',function(){
 function init(){
     console.log("start init...");
     initLoader(function (){
-        console.log("All source loaded")
+        console.log("All source loaded");
         //init canvas after source loaded
         initDraw();
     });
