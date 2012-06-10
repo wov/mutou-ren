@@ -39,13 +39,13 @@ window.addEventListener('load',function(){
 });
 
 function init(){
-    console.log("start init...");
+    //console.log("start init...");
     initLoader(function (){
         console.log("All source loaded");
         //init canvas after source loaded
         initDraw();
     });
-    console.log("stop init...");
+    //console.log("stop init...");
 }
 
 function switchRole(){

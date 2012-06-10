@@ -89,15 +89,16 @@ function drawMap(){
     // Best Framerate targeted (60 FPS)
     Ticker.setInterval(17);
 
+
+    //先拿main来调试
+    showScene("enter");
+
 }
 
 
 function prepareScene(){
 
 
-    //<<---------enter
-
-    //enter------------>>
 
 
     //<<-------------win
@@ -155,6 +156,100 @@ function prepareScene(){
     //main-------------->>
 
 
+    //<<---------enter
+    var bg = new SpriteSheet({
+        // image to use
+        images: [img.hongxing],
+        // width, height & registration point of each sprite
+        frames: {width: 640, height: 960, regX: 0, regY: 0},
+        animations: {
+            idle: [0, 1, "idle", 32]
+        }
+    });
+
+    var bfAnim = new BitmapAnimation(bg);
+
+    bfAnim.gotoAndPlay("idle");
+    bfAnim.alpha = 0.3;
+    scene.enter.addChild(bfAnim);
+    scene.enter.focusRole = {};
+
+    scene.enter.woodMan = [];
+    scene.enter.focusRole.woodMan = [];
+    for(var n=0, nmax = woodManNum; n<nmax; n++){
+        scene.enter.woodMan[n] = new Bitmap(woodMan[n].img.small_face);
+        scene.enter.woodMan[n].regX = 94;
+        scene.enter.woodMan[n].regY = 214;
+        scene.enter.woodMan[n].x = 250 + 150*n;
+        scene.enter.woodMan[n].y = 600;
+        scene.enter.woodMan[n].scaleX = 0.6;
+        scene.enter.woodMan[n].scaleY = 0.6;
+        scene.enter.woodMan[n].onClick = function(name){
+            return function(){
+                roleSelete(name);
+
+                //hide all small role
+                for(var n=0, nmax = woodManNum; n<nmax; n++){
+                    scene.enter.woodMan[n].visible = false;
+                }
+                scene.enter.bossMan.visible = false;
+
+                //show focus big role
+                scene.enter.focusRole.woodMan[name].visible = true;
+            }
+        }(n);
+        scene.enter.addChild(scene.enter.woodMan[n]);
+
+        //add bigMan from win scene
+        scene.enter.focusRole.woodMan[n] = scene.win.woodMan[n];
+        scene.enter.addChild(scene.win.woodMan[n]);
+    }
+    scene.enter.bossMan = new Bitmap(bossMan.img.small_face);
+    scene.enter.bossMan.x = 100;
+    scene.enter.bossMan.y = 600;
+    scene.enter.bossMan.regX = 60;
+    scene.enter.bossMan.regY = 128;
+    scene.enter.bossMan.onClick = function(){
+        //return function(){
+            roleSelete("boss");
+
+            //hide all small role
+            for(var n=0, nmax = woodManNum; n<nmax; n++){
+                scene.enter.woodMan[n].visible = false;
+            }
+            scene.enter.bossMan.visible = false;
+
+            //show focus big role
+            scene.enter.focusRole.bossMan.visible = true;
+        //}
+
+    }
+    scene.enter.addChild(scene.enter.bossMan);
+
+    //add bigMan from win scene
+    scene.enter.focusRole.bossMan = scene.win.bossMan;
+    scene.enter.addChild(scene.win.bossMan);
+
+
+    //enter------------>>
+
+
+}
+
+function roleSelete(name){
+
+}
+
+
+function disableSelete(name){
+    if(name === "boss"){
+        scene.enter.bossMan.alpha = 0.4;
+        scene.enter.bossMan.onClick = null;
+    }
+    else{
+        scene.enter.woodMan[name].alpha = 0.4;
+        scene.enter.woodMan[name].onClick = null;
+    }
 }
 
 
