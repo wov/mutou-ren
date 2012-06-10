@@ -19,6 +19,17 @@ function connectSocket(){
         gameParam = param;
     });
 
+    //发生异常
+    socket.on('raiseException',function(data){
+        console.log(data);
+    });
+
+    //重新载入舞台
+    socket.on('reloadStage',function(data){
+        var _data = JSON.parse(data);
+        console.log(_data);
+    });
+
     //connect the server success.
     socket.on('success',function(data){
         if(data === 'noInit'){
@@ -71,10 +82,12 @@ function connectSocket(){
         console.log('reflash data!');
         for(var n= 0 ; n <data.length;n++){
             if(!jumping[n]){
+                if(n==Role.id-1){
+                    console.log(~~data[n]);
+                }
                 jumpWood(n,~~data[n]);
             }
         }
-
     });
 
     //

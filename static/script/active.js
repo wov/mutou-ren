@@ -15,9 +15,21 @@ function connectSocket(){
         //初始化
     });
 
-//失去连接
+    //失去连接
     socket.on('disconnect',function(){
         console.log('you are lost!!');
+    });
+
+    //发生异常
+    socket.on('raiseException',function(data){
+        console.log('raiseException');
+        console.log(data);
+    });
+
+    //重新载入舞台
+    socket.on('reloadStage',function(data){
+        console.log('raiseException');
+        console.log(data);
     });
 
     //初始化游戏 ，保存所有的参数。
@@ -124,7 +136,7 @@ function connectSocket(){
     });
 
     socket.on('win',function(data){
-        showWin(~~data.roleId);
+        showWin(~~data-1);
     });
 
 
