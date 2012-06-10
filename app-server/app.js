@@ -118,12 +118,19 @@ sockets.on('connection',function(socket){
 						console.log("Am'I Here?");
 						return true;
 					}else{
-						var wooder = gameParams.collection.wooder;
-						console.log(wooder)
+						var collection = gameParams.collection;
+						var wooder = collection.wooder;
+						console.log("==============");
+						console.log(collection);
+						console.log(wooder);
+						console.log("==============");
 						if(wooder.length > 0){
 							for(var i=0;i< wooder.length;i++){
-								console.log(wooder.sessionID+"==?"+sessionID);
-								if (wooder.sessionID == sessionID){
+								console.log("############");
+								console.log(wooder[i].sessionID+"==?"+sessionID);
+								console.log(wooder[i]);
+								console.log("############");
+								if (wooder[i].sessionID == sessionID){
 									return true;
 									}
 								}
