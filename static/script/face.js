@@ -89,6 +89,10 @@ function drawMap(){
     // Best Framerate targeted (60 FPS)
     Ticker.setInterval(17);
 
+
+    //先拿main来调试
+    showScene("main");
+
 }
 
 
