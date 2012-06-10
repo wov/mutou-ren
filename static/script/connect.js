@@ -43,24 +43,21 @@ function connectSocket(){
                     Role.current = 'boss';
                 }
                 addBoss();
-                //TODO:更新boss当前状态。
             }
 
             if(_data.collection.wooder.length>0){
                 for(var n=0;n<_data.collection.wooder.length;n++){
-                    if(Role.currentSessionID && Role.currentSessionID == _data.collection.wooder[n].session){
+                    if(Role.currentSessionID && Role.currentSessionID == _data.collection.wooder[n].sessionID){
                         Role.id = n+1;
                         Role.current = 'wooder';
                     }
                     addWood(n);
-                    //更新wooder的位置。
                     jumpWood(n,_data.collection.wooder[n].position);
                 }
             }
         }
 
         switchRole();
-
     });
 
     //connect the server success.
