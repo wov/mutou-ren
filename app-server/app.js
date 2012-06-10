@@ -106,6 +106,20 @@ sockets.on('connection',function(socket){
 	
 	//�����Ϸ����
 	socket.on('addPerson',function(data){
+		
+		
+		//check wheather game init?
+		console.info("recieve add Person Request and Deal With It");
+		if(!gameParams.collection){
+			socket.emit('addPerson',"NoInit");
+			return;
+		}
+		var wooderCollection = gameParams.collection.wooder;		
+		if(wooderCollection.length > 2){
+			socket.emit('addPerson',"-1");
+			return;
+		}
+
 		if(data == 1){
 			//�жϵ�ǰ�û��Ƿ��Ѿ�����session���ӣ���������Ϊ�˷�ֹˢ�²����������bug
 			console.log("socket.handshake.sessionId:"+ socket.handshake.sessionID);
@@ -145,17 +159,6 @@ sockets.on('connection',function(socket){
 					return;
 					}
 				}
-			console.info("recieve add Person Request and Deal With It");
-			if(!gameParams.collection){
-				socket.emit('addPerson',"NoInit");
-				return;
-			}
-			var wooderCollection = gameParams.collection.wooder;
-			
-			if(wooderCollection.length > 2){
-				socket.emit('addPerson',"-1");
-				return;
-			}
 			var rolePool = [];  //rolePool
 			if(gameParams.collection.watcher.id==0){
 				gameParams.collection.watcher.id = -1; //id -1Ϊboss�ı�ʶ
