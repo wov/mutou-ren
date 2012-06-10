@@ -35,41 +35,48 @@ function connectSocket(){
     //重新载入舞台
     socket.on('reloadStage',function(data){
         var _data = JSON.parse(data);
+        console.log(_data);
         if(_data.hasOwnProperty('collection')){
             if(!!_data.collection.watcher){
-                if(Role.currentSessionID && Role.currentSessionID == _data.watcher.session){
+                if(Role.currentSessionID && Role.currentSessionID == _data.collection.watcher.session){
                     Role.id = -1;
+                    Role.current = 'boss';
                 }
                 addBoss();
-                //TODO:更新boss当前状态。
             }
 
             if(_data.collection.wooder.length>0){
                 for(var n=0;n<_data.collection.wooder.length;n++){
-                    if(Role.currentSessionID && Role.currentSessionID == _data.collection.wooder[n].session){
+                    if(Role.currentSessionID && Role.currentSessionID == _data.collection.wooder[n].sessionID){
                         Role.id = n+1;
+                        Role.current = 'wooder';
                     }
                     addWood(n);
-                    //TODO：更新位置信息。
+                    jumpWood(n,_data.collection.wooder[n].position);
                 }
             }
         }
+
+        switchRole();
     });
 
     //connect the server success.
     socket.on('success',function(data){
+//        console.log('');
+
+
         if(data === 'noInit'){
             console.log('can not join the game! sorry');
             return;
         }
         if(data === '-1'){
-            console.log('people are overload');
+            alert('房间人数已满。');
             return;
         }
 
         if(data.id && data.id == -1){
             addBoss();
-            Role.current = 'watcher';
+            Role.current = 'boss';
             socket.on('afterCooling',function(){
                 showDraw123();
             });
@@ -79,6 +86,9 @@ function connectSocket(){
             addWood(~~data.roleId - 1);
             Role.current = 'wooder';
             Role.id = ~~data.roleId;
+
+
+
         }
 
 

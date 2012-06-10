@@ -49,8 +49,9 @@ function init(){
 }
 
 function switchRole(){
+    console.log(Role.current);
     if(Role.current){
-        console.log(Role.current);
+//        console.log(Role.current);
         switch(Role.current){
             case 'screen':
 
