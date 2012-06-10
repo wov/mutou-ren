@@ -148,17 +148,24 @@ function prepareScene(){
             idle: [0, 1, "idle", 32]
         }
     });
-    var s;
-    for(var n=0;n < 3; n++){
-        s = drawOne();
-        s.x = 100 + 220 * n;
-        scene.main.addChild(s);
-    }
 
     var bfAnim = new BitmapAnimation(bg);
 
     bfAnim.gotoAndPlay("idle");
     scene.main.addChild(bfAnim);
+
+    var s;
+    scene.main.alert = [];
+    for(var n=0;n < 3; n++){
+        s = drawOne();
+        scene.main.alert.push(s);
+        s.scaleX = 0.7;
+        s.scaleY = 0.7;
+        s.x = 120 + 160 * n;
+        s.y = 50;
+        s.visible = false;
+        scene.main.addChild(s);
+    }
     //main-------------->>
 
 
@@ -511,8 +518,22 @@ function bossStartLR(){
     });
 }
 
-function bossStartAlert123(n){
+function showAlert123(i){
     //显示 123 的预警
+    for(var n=0, nmax = scene.main.alert.length; n<nmax; n++){
+        if(n + 1 <= i){
+            scene.main.alert[n].visible = true;
+        }
+        else{
+            scene.main.alert[n].visible = false;
+        }
+    }
+}
+function hideAlert123(){
+    //隐藏 123 的预警
+    for(var n=0, nmax = scene.main.alert.length; n<nmax; n++){
+            scene.main.alert[n].visible = false;
+    }
 }
 
 
@@ -614,7 +635,7 @@ function hideDraw123(){
     for(var n=0;n<3;n++){
         drawClick[n].visible = false;
     }
-
+    onClickAll123Timeout();
     showBoss("back", Role.current);
 
 }
@@ -628,6 +649,10 @@ function onClick123(n){
 function onClickAll123(){
     socket.emit('confirmTurn','1');
 //    console.log("onClickAll123");
+}
+
+function onClickAll123Timeout(){
+    //超过了5秒没有能点击完成 123的回调
 }
 
 function onFirstClick(){
