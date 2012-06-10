@@ -35,9 +35,10 @@ function connectSocket(){
     //重新载入舞台
     socket.on('reloadStage',function(data){
         var _data = JSON.parse(data);
+        console.log(_data);
         if(_data.hasOwnProperty('collection')){
             if(!!_data.collection.watcher){
-                if(Role.currentSessionID && Role.currentSessionID == _data.watcher.session){
+                if(Role.currentSessionID && Role.currentSessionID == _data.collection.watcher.session){
                     Role.id = -1;
                 }
                 addBoss();
@@ -50,7 +51,7 @@ function connectSocket(){
                         Role.id = n+1;
                     }
                     addWood(n);
-                    //TODO：更新位置信息。
+                    jumpWood(n,_data.collection.wooder[n].position);
                 }
             }
         }

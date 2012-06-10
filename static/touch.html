@@ -11,17 +11,26 @@
 </head>
 
 <body>
+<div class="progBar"><span id="progInfo">0</span>/100</div>
 <div id="center" class="center">
     <audio id="music" src="/music/bg.aac" autoplay="true" loop="true">
     </audio>
     <div id="bg" class="allbg"></div>
     <canvas id="canvas" width=640 height=960 class="allbg"></canvas>
+
+    <script src="script/soundmanager2-nodebug-jsmin.js"></script>
+    <script src="script/PxLoader.js"></script>
+    <script src="script/PxLoaderImage.js"></script>
+    <script src="script/PxLoaderSound.js"></script>
+
+
     <script src='/script/cfg.js'></script>
     <script src='/easeljs/lib/easeljs-0.4.2.min.js'></script>
     <script src='/script/socket.io.js'></script>
     <script src='/script/connect.js'></script>
     <script src='/script/face.js'></script>
     <script src='/script/index.js'></script>
+
 </div>
 
 
