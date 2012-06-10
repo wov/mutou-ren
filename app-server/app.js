@@ -119,8 +119,10 @@ sockets.on('connection',function(socket){
 						return true;
 					}else{
 						var wooder = gameParams.collection.wooder;
+						console.log(wooder)
 						if(wooder.length > 0){
 							for(var i=0;i< wooder.length;i++){
+								console.log(wooder.sessionID+"==?"+sessionID);
 								if (wooder.sessionID == sessionID){
 									return true;
 									}
