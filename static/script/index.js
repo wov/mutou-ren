@@ -21,7 +21,7 @@ function switchRole(){
             case 'wooder':
                 initWooder();
                 break;
-            case 'watcher':
+            case 'boss':
                 initWatcher();
                 break;
             default :
@@ -36,11 +36,8 @@ function switchRole(){
 var clickAreaRecord = [];
 function initWooder(){
     var d_canvas = document.getElementById('canvas');
-
-
     if("ontouchstart" in window){
         d_canvas.addEventListener('touchstart',function(e){
-//        touchList = touchList || [];
             var point  = {};
             point.x = e.pageX;
             point.y = e.pageY;
@@ -67,7 +64,6 @@ function initWooder(){
             }
         },false);
     }else{
-
         document.onkeypress = function(e){
             var clickArea;
             switch(e.charCode){
@@ -97,8 +93,6 @@ function initWooder(){
 }
 
 function initWatcher(){
-//    showDraw123();
-
     setInterval(function(){
         showDraw123();
     },5000);

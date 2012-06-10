@@ -102,7 +102,7 @@ function connectSocket(){
         if(data.id && data.id == -1){
 //            console.log('add boss?')
             addBoss();
-            Role.current = 'watcher';
+            Role.current = 'boss';
         }
 
         if(data.roleId && data.roleId == 1 || data.roleId == 2 || data.roleId == 3){
@@ -124,14 +124,16 @@ function connectSocket(){
     });
 
     socket.on('win',function(data){
-        showWin(~~data.roleId);
-        console.log(~~data.roleId);
+        //显示胜利的画面。
+        showWin(~~data-1);
+        //TODO：
+
     });
 
     socket.on('twistBackBody',function(){
         showBoss("back");
 
-        if(Role.current == 'watcher'){
+        if(Role.current == 'boss'){
             showDraw123();
         }
 //        showDraw123();
