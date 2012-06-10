@@ -5,17 +5,23 @@
 
 var express = require('express')
   , routes = require('./routes')
-  ,	io = require('socket.io') ;
+  ,	io = require('socket.io');
 
 var app = module.exports = express.createServer();
-
+var MemoryStore = express.session.MemoryStore,
+    sessionStore = new MemoryStore();
 // Configuration
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.use(express.cookieParser());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
+  app.use(express.session({
+    store: sessionStore,
+    secret: 'secret', 
+    key: 'express.sid'}));
   app.use(app.router);
   app.use(express.static(__dirname + '/../static'));
 });
@@ -42,10 +48,33 @@ app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
-var io = io.listen(app);
-var sockets = io.sockets;
+var sio = io.listen(app);
+var sockets = sio.sockets;
 var gameParams = {};
+
+var connectUtils = require('connect').utils;
+var parseSignedCookie = connectUtils.parseSignedCookie;
+sio.set('authorization', function (data, accept) {
+    // check if there's a cookie header
+	console.log("data.headers.cookie:"+data.headers.cookie);
+    if (data.headers.cookie) {
+        // if there is, parse the cookie
+        data.cookie = parseSignedCookie(data.headers.cookie);
+        // note that you will need to use the same key to grad the
+        // session id, as you specified in the Express setup.
+        data.sessionID = data.cookie.split('=')[1];
+    } else {
+       // if there isn't, turn down the connection with a message
+       // and leave the function.
+       return accept('No cookie transmitted.', false);
+    }
+    // accept the incoming connection
+    accept(null, true);
+});
+
+
 sockets.on('connection',function(socket){
+	console.info("SessionID:"+ socket.handshake.sessionID );
 	console.info("client have connect to server");
 	socket.on('ready',function(data){
 		console.info("recieve ",data,"from client");
@@ -79,7 +108,33 @@ sockets.on('connection',function(socket){
 	socket.on('addPerson',function(data){
 		if(data == 1){
 			//判断当前用户是否已经建立session连接，这样做是为了防止刷新产生新人物的bug
-			console.info("SessionID:"+socket.handshake.sessionID);
+			console.log("socket.handshake.sessionId:"+ socket.handshake.sessionID);
+			if(socket.handshake.sessionID){
+				var sessionID = socket.handshake.sessionID;
+				console.log(sessionID);
+				var role_in_list = function(sessionID,gameParams){
+					console.log(gameParams.collection.watcher.session+"==?"+sessionID);
+					if(gameParams.collection.watcher.session && gameParams.collection.watcher.session == sessionID){
+						console.log("Am'I Here?");
+						return true;
+					}else{
+						var wooder = gameParams.collection.wooder;
+						if(wooder.length > 0){
+							for(var i=0;i< wooder.length;i++){
+								if (wooder.sessionID == sessionID){
+									return true;
+									}
+								}
+						}		
+					}
+				return false;
+				}
+				if(role_in_list(sessionID,gameParams)){
+					socket.emit("raiseException",-2);
+					socket.emit("reloadStage",JSON.stringify(gameParams));
+					return;
+					}
+				}
 			console.info("recieve add Person Request and Deal With It");
 			if(!gameParams.collection){
 				socket.emit('addPerson',"NoInit");
@@ -93,7 +148,8 @@ sockets.on('connection',function(socket){
 			}
 			var rolePool = [];  //rolePool
 			if(gameParams.collection.watcher.id==0){
-				gameParams.collection.watcher.id = -1;
+				gameParams.collection.watcher.id = -1; //id -1为boss的标识
+				gameParams.collection.watcher.session = socket.handshake.sessionID;
 				var newRoleWatcher = gameParams.collection.watcher;
 				socket.broadcast.emit('addPerson',newRoleWatcher);
 				
