@@ -62,6 +62,7 @@ sockets.on('connection',function(socket){
 				collection:{
 					watcher:{
 						id:0,
+						session:0,
 						watchTime:0,
 						turnWilling:false,
 						turning:false
@@ -77,6 +78,8 @@ sockets.on('connection',function(socket){
 	//添加游戏人物
 	socket.on('addPerson',function(data){
 		if(data == 1){
+			//判断当前用户是否已经建立session连接，这样做是为了防止刷新产生新人物的bug
+			console.info("SessionID:"+socket.handshake.sessionID);
 			console.info("recieve add Person Request and Deal With It");
 			if(!gameParams.collection){
 				socket.emit('addPerson',"NoInit");
@@ -100,7 +103,7 @@ sockets.on('connection',function(socket){
 				//标示游戏开始
 				gameParams.gameStatus.status = 1;
 				var currentIndex = wooderCollection.length +1;
-				var newRoleWood = {roleId : currentIndex, position:0, lastPosition:0, active:true};
+				var newRoleWood = {roleId : currentIndex, sessionID: socket.handshake.sessionID, position:0, lastPosition:0, active:true};
 				gameParams.collection.wooder.push(newRoleWood);
 				console.info("now wooder ", gameParams.collection.wooder);
 				//向客户端广播新角色
