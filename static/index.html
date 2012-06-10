@@ -8,23 +8,31 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title>1,2,3，木头人！</title>
 
+
     <link rel="stylesheet" href="/style/index.css">
 </head>
 <body>
 
+<div class="progBar"><span id="progInfo">0</span>/100</div>
 <div id="center" class="center">
-    <audio id="music" src="/music/bg.aac" autoplay="true" loop="true">
-    </audio>
-    <div id="bg" class="allbg"></div>
+
+    <div id="bg" class="allbg">
+
+    </div>
     <canvas id="canvas" width=640 height=960 class="allbg">
 
     </canvas>
+    <!-- source loader -->
+    <!-- <script src="script/soundmanager2.js"></script> --->
+    <script src="script/soundmanager2-nodebug-jsmin.js"></script>
+    <script src="script/PxLoader.js"></script>
+    <script src="script/PxLoaderImage.js"></script>
+    <script src="script/PxLoaderSound.js"></script>
+    <!-- end source loader -->
     <script src='/script/cfg.js'></script>
     <script src='/easeljs/lib/easeljs-0.4.2.min.js'></script>
-
     <script src='/script/socket.io.js'></script>
     <script src='/script/active.js'></script>
-
     <script src='/script/face.js'></script>
     <script src='/script/index.js'></script>
 </div>

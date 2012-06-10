@@ -21,5 +21,13 @@ body,html{margin: 0;padding:0;background:#333;}
     margin: 0 auto;
 }
 
+.progBar{
+    width:100%;
+    text-align: center;
+    color: white;
+    font-size: 48;
+    position:absolute;
+}
+
 audio {display:none;}
 

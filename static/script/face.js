@@ -1,25 +1,5 @@
 //事先加载好图片
-var imgsrc = [
-        "monsterARun",
-        "monsterAIdle",
-        "hongxing",
-        "wood_1s_b",
-        "wood_1s_f",
-        "wood_1b",
-        "wood_2s_b",
-        "wood_2s_f",
-        "wood_2b",
-        "wood_3s_b",
-        "wood_3s_f",
-        "wood_3b",
-        "bose_s_0",
-        "bose_s_1",
-        "bose_s_2",
-        "bose_b",
-        "win_bg"
-    ],
-    img = {},
-    canvas,
+var canvas,
     stage,
     w,
     h;
@@ -59,57 +39,36 @@ function initDraw(){
     h = canvas.height;
 
 
-
     stage.scaleX = stage.scaleY = canvas.height/960;
-
     console.log("w:" + w + " h:" + h);
     console.log("scale:" + stage.scaleX);
 
-    var newImg;
-    for(var n=0, nmax=imgsrc.length; n<nmax; n++){
-        img[imgsrc[n]] = newImg = new Image();
-        newImg.onload = handleImageLoad;
-        newImg.onerror = function(){};
-        newImg.src = "img/" + imgsrc[n] + ".png";
+
+    var nI;
+    for(var n=0,nmax=woodManNum; n<nmax; n++){
+        nI = n+1;
+        woodMan[n] = {};
+        woodMan[n].img = {
+            small_back:img["wood_" + nI + "s_b"],
+            small_face:img["wood_" + nI + "s_f"],
+            big:img["wood_" + nI + "b"]
+        }
+    }
+    bossMan = {};
+    bossMan.img = {
+            small_back:img.bose_s_0,
+            small_side:img.bose_s_1,
+            small_face:img.bose_s_2,
+            big:img.bose_b
     }
 
-            hasInitDraw = true;
-}
 
-numberOfImagesLoaded = 0;
+    drawMap();
 
-function handleImageLoad(e) {
-    numberOfImagesLoaded++;
+    //连接socket服务器
+    connectSocket();
 
-    // We're not starting the game until all images are loaded
-    // Otherwise, you may start to draw without the resource and raise
-    // this DOM Exception: INVALID_STATE_ERR (11) on the drawImage method
-    if (numberOfImagesLoaded >= imgsrc.length) {
-        numberOfImagesLoaded = 0;
-        var nI;
-        for(var n=0,nmax=woodManNum; n<nmax; n++){
-            nI = n+1;
-            woodMan[n] = {};
-            woodMan[n].img = {
-                small_back:img["wood_" + nI + "s_b"],
-                small_face:img["wood_" + nI + "s_f"],
-                big:img["wood_" + nI + "b"]
-            }
-        }
-        bossMan = {};
-        bossMan.img = {
-                small_back:img.bose_s_0,
-                small_side:img.bose_s_1,
-                small_face:img.bose_s_2,
-                big:img.bose_b
-        }
-
-
-        drawMap();
-
-        //连接socket服务器
-        connectSocket();
-    }
+    hasInitDraw = true;
 }
 
 

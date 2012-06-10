@@ -1,14 +1,51 @@
+var img = {}, sound = {},
+    imgsrc = [
+        "hongxing",
+        "wood_1s_b",
+        "wood_1s_f",
+        "wood_1b",
+        "wood_2s_b",
+        "wood_2s_f",
+        "wood_2b",
+        "wood_3s_b",
+        "wood_3s_f",
+        "wood_3b",
+        "bose_s_0",
+        "bose_s_1",
+        "bose_s_2",
+        "bose_b",
+        "win_bg"
+    ],
+    soundNames = [
+        'cow',
+        'bg'
+    ];
+
+
+
 var cav = document.getElementById("canvas");
 
 var iphone = navigator.userAgent.indexOf("iphone");
 
+//go with HTML5 audio
+soundManager.useHTML5Audio = true;
+soundManager.preferFlash = false;
+//soundManager.reboot();
+
 window.addEventListener('load',function(){
-    init();
+    soundManager.onready(function() {
+        init();
+    });
 });
 
 function init(){
-    initDraw();
-    //先链接服务器获得当前角色。
+    console.log("start init...");
+    initLoader(function (){
+        console.log("All source loaded")
+        //init canvas after source loaded
+        initDraw();
+    });
+    console.log("stop init...");
 }
 
 function switchRole(){
@@ -104,4 +141,83 @@ function initWatcher(){
     },5000);
 }
 
+
+
+function onloading(prog){
+    //show loading
+    document.getElementById("progInfo").innerHTML = prog;
+}
+
+//init loading images&sounds
+function initLoader(callback){
+
+
+    var loader = new PxLoader();
+
+    var i, len, url;
+
+    // queue each sound for loading
+    for(i=0, len = soundNames.length; i < len; i++) {
+
+        // see if the browser can play m4a
+        url = 'music/' + soundNames[i] + '.mp3';
+        if (!soundManager.canPlayURL(url)) {
+            // ok, what about ogg?
+            url = 'music/' + soundNames[i] + '.aac';
+            if (!soundManager.canPlayURL(url)) {
+                continue; // can't be played
+            }
+        }
+
+        // queue the sound using the name as the SM2 id
+        loader.addSound(soundNames[i], url);
+    }
+
+    var imgHolder;
+    //queue each image for loading
+    for(var n=0, nmax = imgsrc.length; n<nmax; n++){
+        imgHolder = new PxLoaderImage("img/"+ imgsrc[n] + ".png");
+        imgHolder.name = imgsrc[n];
+        loader.add(imgHolder);
+    }
+
+    // listen to load events
+    loader.addProgressListener(function(e) {
+
+        if(e.resource.sound){
+            var soundId = e.resource.sound.sID;
+            console.log("sound " + soundId + " loaded");
+            sound[soundId] = function(){
+                var id = soundId;
+                return {
+                    play : function(){
+                        soundManager.play(id, {
+                            onfinish: function() {
+                                //
+                            }
+                        });
+                    }
+                }
+            }();
+        }
+        else if(e.resource.img){
+            var imgId = e.resource.name;
+            console.log("image " + e.resource.name + " loaded");
+            img[imgId] = e.resource.img;
+        }
+
+        onloading(parseInt(e.completedCount * 100/e.totalCount, 10) );
+
+
+    });
+
+    // callback that will be run once images are ready
+    loader.addCompletionListener(function() {
+        callback && callback();
+    });
+
+    loader.start();
+
+
+}
 
