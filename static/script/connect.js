@@ -24,10 +24,36 @@ function connectSocket(){
         console.log(data);
     });
 
+    //获取当前角色的sessionID。
+    socket.on('sendCurrentSessionID',function(data){
+        console.log('sendCurrentSessionID');
+        if(!!data){
+            Role.currentSessionID = data;
+        }
+    });
+
     //重新载入舞台
     socket.on('reloadStage',function(data){
         var _data = JSON.parse(data);
-        console.log(_data);
+        if(_data.hasOwnProperty('collection')){
+            if(!!_data.collection.watcher){
+                if(Role.currentSessionID && Role.currentSessionID == _data.watcher.session){
+                    Role.id = -1;
+                }
+                addBoss();
+                //TODO:更新boss当前状态。
+            }
+
+            if(_data.collection.wooder.length>0){
+                for(var n=0;n<_data.collection.wooder.length;n++){
+                    if(Role.currentSessionID && Role.currentSessionID == _data.collection.wooder[n].session){
+                        Role.id = n+1;
+                    }
+                    addWood(n);
+                    //TODO：更新位置信息。
+                }
+            }
+        }
     });
 
     //connect the server success.
