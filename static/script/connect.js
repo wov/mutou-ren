@@ -16,18 +16,22 @@ function connectSocket(){
     });
 
     socket.on('initGames',function(param){
-        console.log('logs?');
         gameParam = param;
     });
 
-    socket.on('overload',function(data){
-
+    //发生异常
+    socket.on('raiseException',function(data){
+        console.log(data);
     });
 
-    socket.on('success',function(data){
+    //重新载入舞台
+    socket.on('reloadStage',function(data){
+        var _data = JSON.parse(data);
+        console.log(_data);
+    });
 
-//        console.log('success');
-        console.log(data);
+    //connect the server success.
+    socket.on('success',function(data){
         if(data === 'noInit'){
             console.log('can not join the game! sorry');
             return;
@@ -51,6 +55,8 @@ function connectSocket(){
             Role.id = ~~data.roleId;
         }
 
+
+        //todo:change here
         if(data.roleId == 1){
             addBoss();
         }
@@ -69,15 +75,19 @@ function connectSocket(){
         switchRole();
     });
 
+
+
     //刷新每个人的位置
     socket.on('returnPositionInfo',function(data){
         console.log('reflash data!');
         for(var n= 0 ; n <data.length;n++){
             if(!jumping[n]){
+                if(n==Role.id-1){
+                    console.log(~~data[n]);
+                }
                 jumpWood(n,~~data[n]);
             }
         }
-
     });
 
     //
@@ -102,7 +112,7 @@ function connectSocket(){
         if(data.id && data.id == -1){
 //            console.log('add boss?')
             addBoss();
-            Role.current = 'watcher';
+            Role.current = 'boss';
         }
 
         if(data.roleId && data.roleId == 1 || data.roleId == 2 || data.roleId == 3){
@@ -124,17 +134,17 @@ function connectSocket(){
     });
 
     socket.on('win',function(data){
-        showWin(~~data.roleId);
-        console.log(~~data.roleId);
+        //显示胜利的画面。
+        showWin(~~data-1);
+        //todo:
+
     });
 
     socket.on('twistBackBody',function(){
         showBoss("back");
-
-        if(Role.current == 'watcher'){
+        if(Role.current == 'boss'){
             showDraw123();
         }
-//        showDraw123();
     });
 
 

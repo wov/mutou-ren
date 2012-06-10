@@ -58,7 +58,7 @@ function switchRole(){
             case 'wooder':
                 initWooder();
                 break;
-            case 'watcher':
+            case 'boss':
                 initWatcher();
                 break;
             default :
@@ -73,11 +73,8 @@ function switchRole(){
 var clickAreaRecord = [];
 function initWooder(){
     var d_canvas = document.getElementById('canvas');
-
-
     if("ontouchstart" in window){
         d_canvas.addEventListener('touchstart',function(e){
-//        touchList = touchList || [];
             var point  = {};
             point.x = e.pageX;
             point.y = e.pageY;
@@ -104,7 +101,6 @@ function initWooder(){
             }
         },false);
     }else{
-
         document.onkeypress = function(e){
             var clickArea;
             switch(e.charCode){
@@ -133,9 +129,9 @@ function initWooder(){
     }
 }
 
-function initWatcher(){
-//    showDraw123();
 
+
+function initWatcher(){
     setInterval(function(){
         showDraw123();
     },5000);
@@ -218,6 +214,28 @@ function initLoader(callback){
 
     loader.start();
 
+}
+//当屏幕发生转动
+window.onorientationchange = function(){
+    updateOrientation();
+}
 
+//test the screen orientation
+function updateOrientation(){
+    switch(window.orientation)
+    {
+        case 0:
+            console.log('');
+            break;
+        case -90:
+            console.log('right, screen turned clockwise');
+            break;
+        case 90:
+            console.log('left, screen turned counterclockwise');
+            break;
+        case 180:
+            console.log('upside-down portrait');
+            break;
+    }
 }
 

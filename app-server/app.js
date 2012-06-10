@@ -5,17 +5,23 @@
 
 var express = require('express')
   , routes = require('./routes')
-  ,	io = require('socket.io') ;
+  ,	io = require('socket.io');
 
 var app = module.exports = express.createServer();
-
+var MemoryStore = express.session.MemoryStore,
+    sessionStore = new MemoryStore();
 // Configuration
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.use(express.cookieParser());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
+  app.use(express.session({
+    store: sessionStore,
+    secret: 'secret', 
+    key: 'express.sid'}));
   app.use(app.router);
   app.use(express.static(__dirname + '/../static'));
 });
@@ -42,14 +48,37 @@ app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
-var io = io.listen(app);
-var sockets = io.sockets;
+var sio = io.listen(app);
+var sockets = sio.sockets;
 var gameParams = {};
+
+var connectUtils = require('connect').utils;
+var parseSignedCookie = connectUtils.parseSignedCookie;
+sio.set('authorization', function (data, accept) {
+    // check if there's a cookie header
+	console.log("data.headers.cookie:"+data.headers.cookie);
+    if (data.headers.cookie) {
+        // if there is, parse the cookie
+        data.cookie = parseSignedCookie(data.headers.cookie);
+        // note that you will need to use the same key to grad the
+        // session id, as you specified in the Express setup.
+        data.sessionID = data.cookie.split('=')[1];
+    } else {
+       // if there isn't, turn down the connection with a message
+       // and leave the function.
+       return accept('No cookie transmitted.', false);
+    }
+    // accept the incoming connection
+    accept(null, true);
+});
+
+
 sockets.on('connection',function(socket){
+	console.info("SessionID:"+ socket.handshake.sessionID );
 	console.info("client have connect to server");
 	socket.on('ready',function(data){
 		console.info("recieve ",data,"from client");
-		//ÖØÖÃÄ¬ÈÏ²ÎÊý
+		//ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½Ï²ï¿½ï¿½ï¿½
 		gameParams = {
 				config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:60},
 				gameStatus:{winner:0,currentTime:0,status:3,lastWalkId:0,lastWalkRoleId:0,turnLock:false},
@@ -62,6 +91,7 @@ sockets.on('connection',function(socket){
 				collection:{
 					watcher:{
 						id:0,
+						session:0,
 						watchTime:0,
 						turnWilling:false,
 						turning:false
@@ -74,9 +104,38 @@ sockets.on('connection',function(socket){
 		
 	});
 	
-	//Ìí¼ÓÓÎÏ·ÈËÎï
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½
 	socket.on('addPerson',function(data){
 		if(data == 1){
+			//ï¿½Ð¶Ïµï¿½Ç°ï¿½Ã»ï¿½ï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½sessionï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ë·ï¿½Ö¹Ë¢ï¿½Â²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bug
+			console.log("socket.handshake.sessionId:"+ socket.handshake.sessionID);
+			if(socket.handshake.sessionID){
+				var sessionID = socket.handshake.sessionID;
+				console.log(sessionID);
+				var role_in_list = function(sessionID,gameParams){
+					console.log(gameParams.collection.watcher.session+"==?"+sessionID);
+					if(gameParams.collection.watcher.session && gameParams.collection.watcher.session == sessionID){
+						console.log("Am'I Here?");
+						return true;
+					}else{
+						var wooder = gameParams.collection.wooder;
+						if(wooder.length > 0){
+							for(var i=0;i< wooder.length;i++){
+								if (wooder.sessionID == sessionID){
+									return true;
+									}
+								}
+						}		
+					}
+				return false;
+				}
+				if(role_in_list(sessionID,gameParams)){
+					socket.emit("raiseException",-2);
+					socket.emit("sendCurrentSessionID",sessionID);
+					socket.emit("reloadStage",JSON.stringify(gameParams));
+					return;
+					}
+				}
 			console.info("recieve add Person Request and Deal With It");
 			if(!gameParams.collection){
 				socket.emit('addPerson',"NoInit");
@@ -90,20 +149,21 @@ sockets.on('connection',function(socket){
 			}
 			var rolePool = [];  //rolePool
 			if(gameParams.collection.watcher.id==0){
-				gameParams.collection.watcher.id = -1;
+				gameParams.collection.watcher.id = -1; //id -1Îªbossï¿½Ä±ï¿½Ê¶
+				gameParams.collection.watcher.session = socket.handshake.sessionID;
 				var newRoleWatcher = gameParams.collection.watcher;
 				socket.broadcast.emit('addPerson',newRoleWatcher);
 				
 				socket.emit('success',newRoleWatcher);
 				console.info("add watcher success, watch property:",newRoleWatcher);
 			}else{
-				//±êÊ¾ÓÎÏ·¿ªÊ¼
+				//ï¿½ï¿½Ê¾ï¿½ï¿½Ï·ï¿½ï¿½Ê¼
 				gameParams.gameStatus.status = 1;
 				var currentIndex = wooderCollection.length +1;
-				var newRoleWood = {roleId : currentIndex, position:0, lastPosition:0, active:true};
+				var newRoleWood = {roleId : currentIndex, sessionID: socket.handshake.sessionID, position:0, lastPosition:0, active:true};
 				gameParams.collection.wooder.push(newRoleWood);
 				console.info("now wooder ", gameParams.collection.wooder);
-				//Ïò¿Í»§¶Ë¹ã²¥ÐÂ½ÇÉ«
+				//ï¿½ï¿½Í»ï¿½ï¿½Ë¹ã²¥ï¿½Â½ï¿½É«
 				socket.broadcast.emit('addPerson',newRoleWood);
 				socket.emit('success',newRoleWood);
 			}
@@ -112,20 +172,20 @@ sockets.on('connection',function(socket){
 		}
 	});
 	
-	//¼àÌý×ßÂ·ÊÂ¼þ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½Â¼ï¿½
 	socket.on("walk",function(data){
 		console.log("walk object:",gameParams);
-		//»ñÈ¡roleId
+		//ï¿½ï¿½È¡roleId
 		var roleId = data.roleId;
 		var stepLength = gameParams.config.stepLength;
 		var rolePositionContainer = [];
 		if(!gameParams.collection.wooder[roleId-1].active){
 			return ;
 		}
-		//»ñÈ¡×îºówalkµÄÊÂ¼þ
+		//ï¿½ï¿½È¡ï¿½ï¿½ï¿½walkï¿½ï¿½ï¿½Â¼ï¿½
 		gameParams.gameStatus.lastWalkId += 1;
 		gameParams.gameStatus.lastWalkRoleId = roleId;
-		if(gameParams.gameStatus.turnLock){ //Èç¹û×ªÍ·Ëø¶¨ÊÂ¼þÎªtrueÊ±»¹ÓÐwalk£¬¸ÃÍæ¼ÒÁ¢¼´³ö¾Ö
+		if(gameParams.gameStatus.turnLock){ //ï¿½ï¿½ï¿½×ªÍ·ï¿½ï¿½ï¿½Â¼ï¿½ÎªtrueÊ±ï¿½ï¿½ï¿½ï¿½walkï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			gameParams.collection.wooder[roleId-1].active = false;
 			socket.emit("outStage",{roleId:roleId});
 			socket.broadcast.emit("outStage",{roleId:roleId});
@@ -151,7 +211,7 @@ sockets.on('connection',function(socket){
 		return ;
 	})
 
-	//×¼±¸×ªÉíÊÂ¼þ
+	//×¼ï¿½ï¿½×ªï¿½ï¿½ï¿½Â¼ï¿½
 	socket.on('willingBegin',function(data){
 		if(data == 1){
 			gameParams.collection.watcher.turnWilling = true;

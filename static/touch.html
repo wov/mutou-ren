@@ -7,23 +7,45 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title>1,2,3，木头人！</title>
+    <link rel="stylesheet" href="/style/index.css">
 </head>
 
-<link rel='stylesheet' href="style/handle.css" />
-
 <body>
-
-
-<div id="Con">
-    <canvas id="Canvas">
-
-    </canvas>
+<div id="center" class="center">
+    <audio id="music" src="/music/bg.aac" autoplay="true" loop="true">
+    </audio>
+    <div id="bg" class="allbg"></div>
+    <canvas id="canvas" width=640 height=960 class="allbg"></canvas>
+    <script src='/script/cfg.js'></script>
+    <script src='/easeljs/lib/easeljs-0.4.2.min.js'></script>
+    <script src='/script/socket.io.js'></script>
+    <script src='/script/connect.js'></script>
+    <script src='/script/face.js'></script>
+    <script src='/script/index.js'></script>
 </div>
 
-<script src='script/cfg.js'></script>
-<script src='script/socket.io.js'></script>
-<script src='script/touch.js'></script>
-<script src='script/initHandle.js'></script>
+
+<div style='position:absolute;top:0;left:0; width:400px;height:400px'>
+    <input type='button' id='selectBoss' value='selectBoss'/>
+    <br/>
+    <input type='button' id='selectWooder1' value='selectWooder1'/>
+    <br/>
+    <input type='button' id='selectWooder2' value='selectWooder2'/>
+    <br/>
+    <input type='button' id='selectWooder3' value='selectWooder3'/>
+    <br/>
+
+    <input type='button' id='startGame' value= 'startGame'>
+    <br/>
+
+    <input type='button' id='click1' value='click1'/>
+    <br/>
+    <input type='button' id='click2' value='click2'/>
+    <br/>
+    <input type='button' id='click3' value='click3'/>
+    <br/>
+
+</div>
 
 </body>
 </html>
