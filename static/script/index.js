@@ -92,10 +92,36 @@ function initWooder(){
     }
 }
 
+
+
 function initWatcher(){
     setInterval(function(){
         showDraw123();
     },5000);
 }
 
+
+//当屏幕发生转动
+window.onorientationchange = function(){
+    updateOrientation();
+}
+
+//test the screen orientation
+function updateOrientation(){
+    switch(window.orientation)
+    {
+        case 0:
+            console.log('');
+            break;
+        case -90:
+            console.log('right, screen turned clockwise');
+            break;
+        case 90:
+            console.log('left, screen turned counterclockwise');
+            break;
+        case 180:
+            console.log('upside-down portrait');
+            break;
+    }
+}
 

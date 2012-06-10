@@ -16,18 +16,11 @@ function connectSocket(){
     });
 
     socket.on('initGames',function(param){
-        console.log('logs?');
         gameParam = param;
     });
 
-    socket.on('overload',function(data){
-
-    });
-
+    //connect the server success.
     socket.on('success',function(data){
-
-//        console.log('success');
-        console.log(data);
         if(data === 'noInit'){
             console.log('can not join the game! sorry');
             return;
@@ -51,6 +44,8 @@ function connectSocket(){
             Role.id = ~~data.roleId;
         }
 
+
+        //todo:change here
         if(data.roleId == 1){
             addBoss();
         }
@@ -68,6 +63,8 @@ function connectSocket(){
 
         switchRole();
     });
+
+
 
     //刷新每个人的位置
     socket.on('returnPositionInfo',function(data){
@@ -126,17 +123,15 @@ function connectSocket(){
     socket.on('win',function(data){
         //显示胜利的画面。
         showWin(~~data-1);
-        //TODO：
+        //todo:
 
     });
 
     socket.on('twistBackBody',function(){
         showBoss("back");
-
         if(Role.current == 'boss'){
             showDraw123();
         }
-//        showDraw123();
     });
 
 
