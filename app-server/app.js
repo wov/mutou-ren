@@ -131,8 +131,8 @@ sockets.on('connection',function(socket){
 				}
 				if(role_in_list(sessionID,gameParams)){
 					socket.emit("raiseException",-2);
-					socket.emit("reloadStage",JSON.stringify(gameParams));
 					socket.emit("sendCurrentSessionID",sessionID);
+					socket.emit("reloadStage",JSON.stringify(gameParams));
 					return;
 					}
 				}
