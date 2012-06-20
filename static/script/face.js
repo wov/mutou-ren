@@ -90,7 +90,7 @@ function drawMap(){
     Ticker.setInterval(17);
 
 
-    //先拿main来调试
+    //进入选择角色场景
     showScene("enter");
 
 }
@@ -153,6 +153,19 @@ function prepareScene(){
 
     bfAnim.gotoAndPlay("idle");
     scene.main.addChild(bfAnim);
+
+    var s;
+    scene.main.alert = [];
+    for(var n=0;n < 3; n++){
+        s = drawOne();
+        scene.main.alert.push(s);
+        s.scaleX = 0.7;
+        s.scaleY = 0.7;
+        s.x = 120 + 160 * n;
+        s.y = 50;
+        s.visible = false;
+        scene.main.addChild(s);
+    }
     //main-------------->>
 
 
@@ -505,6 +518,24 @@ function bossStartLR(){
     });
 }
 
+function showAlert123(i){
+    //显示 123 的预警
+    for(var n=0, nmax = scene.main.alert.length; n<nmax; n++){
+        if(n + 1 <= i){
+            scene.main.alert[n].visible = true;
+        }
+        else{
+            scene.main.alert[n].visible = false;
+        }
+    }
+}
+function hideAlert123(){
+    //隐藏 123 的预警
+    for(var n=0, nmax = scene.main.alert.length; n<nmax; n++){
+            scene.main.alert[n].visible = false;
+    }
+}
+
 
 function bossStopLR(){
     bossTick = [];
@@ -538,7 +569,7 @@ var drawClick = [], drawTime = null;
 function showDraw123(){
     if(drawTime){return};
 
-    var pos = radomDraw123(), s, firstClick = false;
+    var pos = radomDraw123(), s, firstClick = false, clickIndex = 0;
 
     //console.log(pos);
     if(!hasDraw123){
@@ -550,20 +581,7 @@ function showDraw123(){
             //console.log(s.x);
             //console.log(s.y);
             drawClick.push(s);
-            s.onClick = (function(num){
-                return function(){
-                    if(!firstClick){
-                        onFirstClick();
-                        firstClick = true;
-                    }
 
-                    //console.log("click a 123");
-                    drawClick[num].visible = false;
-                    if(checkIfClickAll()){
-                        onClickAll123();
-                    }
-                }
-            })(n);
             scene.main.addChild(s);
         }
     }
@@ -573,6 +591,28 @@ function showDraw123(){
             drawClick[n].y = pos[n][1];
             drawClick[n].visible = true;
         }
+    }
+
+    for(var n=0;n<3;n++){
+        drawClick[n].onClick = (function(num){
+            return function(){
+                clickIndex++;
+                if(clickIndex <= 3){
+                    if(!firstClick){
+                        onFirstClick();
+                        firstClick = true;
+                    }
+
+                    onClick123(clickIndex);
+
+                    //console.log("click a 123");
+                    drawClick[num].visible = false;
+                    if(checkIfClickAll()){
+                        onClickAll123();
+                    }
+                }
+            }
+        })(n);
     }
 
     clearTimeout(drawTime);
@@ -595,17 +635,24 @@ function hideDraw123(){
     for(var n=0;n<3;n++){
         drawClick[n].visible = false;
     }
-
+    onClickAll123Timeout();
     showBoss("back", Role.current);
 
 }
 
 
+function onClick123(n){
+    //开始点击123 的第 n 次
 
+}
 
 function onClickAll123(){
     socket.emit('confirmTurn','1');
 //    console.log("onClickAll123");
+}
+
+function onClickAll123Timeout(){
+    //超过了5秒没有能点击完成 123的回调
 }
 
 function onFirstClick(){
