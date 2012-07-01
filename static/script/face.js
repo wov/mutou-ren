@@ -776,7 +776,7 @@ function showWin(man){
         scene.win.woodMan[man].visible = true;
     }
 
-    console.log(man  + "Win!")
+    console.log(man  + " Win!");
 
 }
 
