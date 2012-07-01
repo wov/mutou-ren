@@ -14,27 +14,65 @@ Array.prototype.onepush = function(obj){
     return this;
 }
 
-/**
- * extend anim 动画
- */
+//删除
+Array.prototype.dele = function(obj){
+    var index = this.indexOf(obj);
+    if(index !== -1){
+        this.splice(index, 1);
+    }
+    return this;
+}
+
+//<<------------extend 动画-------------
 DisplayObject.prototype.anim = function(type, value, step, callback){
     if(!this._anim_){
-        this._anim_ = {};
+        this._anim_ = [];
+        this._anim_.animNum = 0;
     }
+    if(!this._anim_[type]){
+        this._anim_.animNum++;
+    }
+    this._anim_.onepush(type);
     this._anim_[type] = {
         fn:callback,
         start : this[type],
         end : value,
+        delt:value - this[type],
         step: step,
         now : 0
     };
     animHolder.onepush(this);
 }
 
-function onAnimTick(){
 
+function animEase(value){
+    return (Math.sqrt(value * 4)) / 2;
 }
 
+function onAnimTick(){
+    var thisElem, animObj, type;
+    for(var n=0, nmax=animHolder.length;n < nmax; n++){
+        thisElem = animHolder[n];
+        //倒序
+        for(var i=thisElem._anim_.length - 1; i >=0; i--){
+            type = thisElem._anim_[i];
+            animObj = thisElem._anim_[type];
+            animObj.now++;
+            thisElem[type] = animObj.delt * animEase( animObj.now / animObj.step) + animObj.start;
+
+            if(animObj.now >= animObj.step){
+                animObj.fn && animObj.fn(thisElem);
+                thisElem._anim_[type] = null;
+                thisElem._anim_.dele(type);
+                thisElem._anim_.animNum--;
+                if(!thisElem._anim_.animNum){
+                    animHolder.dele(thisElem);
+                }
+            }
+        }
+    }
+}
+//--------------extend 动画------------->>
 
 
 var woodManId = 0,
