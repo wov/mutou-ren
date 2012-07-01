@@ -4,8 +4,8 @@ var doc = document;
 
 socket =  io.connect(cfg.socket.host);
 
-var On = doc.getElementById('on');
-
+var On = doc.getElementById('on'),
+    Clear = doc.getElementById('clear');
 
 for(var ev in  INTERFACES_ON){
     showEvent(ev);
@@ -76,5 +76,9 @@ function showEmitEvents(_obj,ev){
     _div.appendChild(btn);
 
     Emit.appendChild(_div);
+
+    Clear.addEventListener('click',function(){
+        On.innerHTML = '';
+    })
 }
 
