@@ -125,6 +125,12 @@ var UI = {
     scene : function(sceneName){
         showScene(sceneName);
     },
+    /** 回调函数，当进入某个场景后回调
+     *  @param {String} sceneName 场景名，目前就三个 “enter”, "main", "win"
+     */
+    active : function(sceneName){
+        //some code
+    },
     /**
      * win场景中，显示胜利者
      * @param {String|Number} name 角色id，“boss”｜0｜1｜2

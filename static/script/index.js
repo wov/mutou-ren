@@ -14,7 +14,9 @@ var img = {}, sound = {},
         "bose_s_1",
         "bose_s_2",
         "bose_b",
-        "win_bg"
+        "win_bg",
+        "start_bg"
+
     ],
     soundNames = [
         'cow',
