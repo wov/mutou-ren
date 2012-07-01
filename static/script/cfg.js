@@ -37,14 +37,14 @@ var INTERFACES_ON = {
         'role' : '',
         'desc' : '默认事件，当与服务器连上之后会立即触发。',
         'statge' : 'loading',
-        'broadcast' : false,
+        'broadcast' : false
     },
     'playerNum' : {
         'character' : '',
         'role' : '',
         'desc' : '获得当前连接到服务器的人数',
         'statge' : 'choose',
-        'broadcast' : true,
+        'broadcast' : true
     },
     'roomNum' : {
         'character' : '',
@@ -94,7 +94,8 @@ var INTERFACES_ON = {
 //客户端发送的接口定义
 var INTERFACES_EMIT = {
     'ready' : {
-        'params' : null
+        'params' : null,
+        'desc'   : '告诉服务器已经做好准备。'
     },
     'addPerson' : {
         'params' : {
