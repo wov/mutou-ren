@@ -155,7 +155,7 @@ var UI = {
      * @param {Number} id 木头人的id
      */
     addWood : function(id){
-        addBoss(id);
+        addWood(id);
     },
     /** 更新木头人的位置
      * @param {Number} id 木头人的id
