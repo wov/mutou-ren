@@ -61,13 +61,16 @@ function onAnimTick(){
             thisElem[type] = animObj.delt * animEase( animObj.now / animObj.step) + animObj.start;
 
             if(animObj.now >= animObj.step){
-                animObj.fn && animObj.fn(thisElem);
                 thisElem._anim_[type] = null;
                 thisElem._anim_.dele(type);
                 thisElem._anim_.animNum--;
                 if(!thisElem._anim_.animNum){
                     animHolder.dele(thisElem);
                 }
+                setTimeout(function(){
+
+                animObj.fn && animObj.fn(thisElem);
+                })
             }
         }
     }
@@ -80,10 +83,12 @@ var woodManId = 0,
     woodMan = {},
     bossMan,
     scene = {
-        main : null,
+        start:null,
         enter : null,
+        main : null,
         win : null
     },
+    sceneNow = null,
     clickInterval = 6000,
     bossState = "back",
     bossHasInit = false,
@@ -171,7 +176,7 @@ function drawMap(){
 
 
     //进入选择入口场景
-    showScene("enter");
+    UI.scene("start");
     sound.bg.play();
 }
 
@@ -346,7 +351,41 @@ function prepareScene(){
 
     //enter------------>>
 
+    //<<-------------start
+    scene.start.bg = new Bitmap(img.start_bg);
+    scene.start.addChild(scene.start.bg);
+    scene.start.bg.onClick = function (){
+        UI.scene("enter");
+    }
+    scene.start.play_b = new Text("Play", "72px bold Arial", "#000");
+    scene.start.play_b.x = 250;
+    scene.start.play_b.y = 460;
+    scene.start.play_w = new Text("Play", "72px bold Arial", "#fff");
+    scene.start.play_w.x = 250;
+    scene.start.play_w.y = 460;
+    scene.start.addChild(scene.start.play_b);
+    scene.start.addChild(scene.start.play_w);
 
+    //start-------------->>
+
+
+
+
+}
+
+function startFlashPlay(){
+    if(scene.start.play_w.alpha == 0){
+        scene.start.play_w.anim("alpha", 1, 60, startFlashPlay);
+    }
+    else{
+
+    scene.start.play_w.anim("alpha", 0, 60, startFlashPlay);
+    }
+
+}
+
+function stopFlashPlay(){
+    animHolder.dele(scene.start.play_w);
 }
 
 function roleSelete(name){
@@ -376,6 +415,14 @@ function showScene(sName){
         }
         scene[sName].visible = true;
     }
+    sceneNow = sName;
+    if(sName === "start"){
+        startFlashPlay();
+    }
+    else{
+        stopFlashPlay();
+    }
+    UI.active(sName);
     console.log("In scene '" + sName + "'");
 }
 
