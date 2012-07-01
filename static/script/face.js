@@ -84,6 +84,7 @@ var woodManId = 0,
         enter : null,
         win : null
     },
+    clickInterval = 6000;
     bossState = "back",
     bossHasInit = false,
     hasInitDraw = false;
@@ -167,8 +168,8 @@ function drawMap(){
     Ticker.setInterval(17);
 
 
-    //进入选择角色场景
-    showScene("enter");
+    //进入选择入口场景
+    //showScene("enter");
 
 }
 
@@ -327,7 +328,8 @@ function prepareScene(){
 }
 
 function roleSelete(name){
-
+    console.log("selected '" + name + "'");
+    UI.roleSelete(name);
 }
 
 
@@ -340,6 +342,7 @@ function disableSelete(name){
         scene.enter.woodMan[name].alpha = 0.4;
         scene.enter.woodMan[name].onClick = null;
     }
+    console.log("disable '" + name + "'");
 }
 
 
@@ -351,6 +354,7 @@ function showScene(sName){
         }
         scene[sName].visible = true;
     }
+    console.log("In scene '" + sName + "'");
 }
 
 function addBoss(){
@@ -396,9 +400,12 @@ function addBoss(){
     scene.main.addChild(faceman);
 
     bossHasInit = true;
+
+    console.log("Boss come in! attention.")
 }
 
-function showBoss(type, iAmBoss){
+function showBoss(type){
+    var iAmBoss = Role.current = "watcher";
     bossState = type;
     bossMan.back.visible = bossMan.face.visible = bossMan.side.visible = false;
     if(type === "back"){
@@ -427,7 +434,7 @@ function showBoss(type, iAmBoss){
         alphaWood(2, 1);
         bossStopLR();
     }
-
+    console.log("Boss turn " + type);
 }
 
 
@@ -456,13 +463,16 @@ function addWood(n){
 
     scene.main.addChild(backman);
     scene.main.addChild(man);
+
+    console.log("Woodman " + n + "come in!");
 }
 
 
-
+//TODO:
 function alphaWood(n, alpha){
     woodMan[n].face && (woodMan[n].face.alpha = woodMan[n].back.alpha = alpha);
 }
+//TODO:
 function showWood(n, dis){
     setWoodParam(n, "dis", dis);
     setWood(n, "visible", false);
@@ -549,6 +559,8 @@ function jumpWood(n, dis){
         jumping[n] = false;
     }
 
+    console.log("Woodman " + n + " run to " + dis);
+
 }
 
 //动画队列
@@ -596,6 +608,7 @@ function bossStartLR(){
 }
 
 function showAlert123(i){
+
     //显示 123 的预警
     for(var n=0, nmax = scene.main.alert.length; n<nmax; n++){
         if(n + 1 <= i){
@@ -605,12 +618,14 @@ function showAlert123(i){
             scene.main.alert[n].visible = false;
         }
     }
+    console.log("Alert " + num);
 }
 function hideAlert123(){
     //隐藏 123 的预警
     for(var n=0, nmax = scene.main.alert.length; n<nmax; n++){
             scene.main.alert[n].visible = false;
     }
+    console.log("Alert clear");
 }
 
 
@@ -697,14 +712,14 @@ function showDraw123(){
     drawTime = setTimeout(function(){
         hideDraw123();
         drawTime = null;
-    }, 6000);
+    }, clickInterval);
 
 
 
 
     hasDraw123 = true;
 
-
+    console.log("ok! let`s start 123 to kill them");
 }
 
 function hideDraw123(){
@@ -713,27 +728,30 @@ function hideDraw123(){
         drawClick[n].visible = false;
     }
     onClickAll123Timeout();
-    showBoss("back", Role.current);
+    showBoss("back");
+    console.log("cancel 123, again");
+}
 
+function onFirstClick(){
+    //socket.emit('willingBegin','1');
 }
 
 
 function onClick123(n){
     //开始点击123 的第 n 次
-
+    UI.bossClick(n);
+    console.log("boss click " + n);
 }
 
 function onClickAll123(){
-    socket.emit('confirmTurn','1');
+    //socket.emit('confirmTurn','1');
 //    console.log("onClickAll123");
 }
 
 function onClickAll123Timeout(){
     //超过了5秒没有能点击完成 123的回调
-}
-
-function onFirstClick(){
-    socket.emit('willingBegin','1');
+    UI.bossCancleClick();
+    console.log("boss cancel click");
 }
 
 function checkIfClickAll(){
@@ -758,6 +776,7 @@ function showWin(man){
         scene.win.woodMan[man].visible = true;
     }
 
+    console.log(man  + "Win!")
 
 }
 
