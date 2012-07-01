@@ -84,7 +84,7 @@ var woodManId = 0,
         enter : null,
         win : null
     },
-    clickInterval = 6000;
+    clickInterval = 6000,
     bossState = "back",
     bossHasInit = false,
     hasInitDraw = false;
@@ -168,9 +168,11 @@ function drawMap(){
     Ticker.setInterval(17);
 
 
-    //进入选择入口场景
-    //showScene("enter");
 
+
+    //进入选择入口场景
+    showScene("enter");
+    sound.bg.play();
 }
 
 
@@ -194,14 +196,13 @@ function prepareScene(){
     bfAnim.gotoAndPlay("idle");
     scene.win.addChild(bfAnim);
 
-
     scene.win.bossMan = new Bitmap(bossMan.img.big);
     scene.win.bossMan.regX = 250;
     scene.win.bossMan.regY = 250;
     scene.win.bossMan.x = 320;
     scene.win.bossMan.y = 480;
-    scene.win.addChild(scene.win.bossMan);
     scene.win.bossMan.visible = false;
+    scene.win.addChild(scene.win.bossMan);
 
     scene.win.woodMan = [];
     for(var n = 0, nmax = woodManNum; n<nmax; n++){
@@ -210,8 +211,8 @@ function prepareScene(){
         scene.win.woodMan[n].regY = 250;
         scene.win.woodMan[n].x = 320;
         scene.win.woodMan[n].y = 480;
-        scene.win.addChild(scene.win.woodMan[n]);
         scene.win.woodMan[n].visible = false;
+        scene.win.addChild(scene.win.woodMan[n]);
     }
     //win--------->>
 
@@ -266,7 +267,6 @@ function prepareScene(){
     scene.enter.focusRole = {};
 
     scene.enter.woodMan = [];
-    scene.enter.focusRole.woodMan = [];
     for(var n=0, nmax = woodManNum; n<nmax; n++){
         scene.enter.woodMan[n] = new Bitmap(woodMan[n].img.small_face);
         scene.enter.woodMan[n].regX = 94;
@@ -291,10 +291,21 @@ function prepareScene(){
         }(n);
         scene.enter.addChild(scene.enter.woodMan[n]);
 
-        //add bigMan from win scene
-        scene.enter.focusRole.woodMan[n] = scene.win.woodMan[n];
+
         scene.enter.addChild(scene.win.woodMan[n]);
     }
+    scene.enter.focusRole.woodMan = [];
+    for(var n = 0, nmax = woodManNum; n<nmax; n++){
+        scene.enter.focusRole.woodMan[n] = new Bitmap(woodMan[n].img.big);
+        scene.enter.focusRole.woodMan[n].regX = 250;
+        scene.enter.focusRole.woodMan[n].regY = 250;
+        scene.enter.focusRole.woodMan[n].x = 320;
+        scene.enter.focusRole.woodMan[n].y = 480;
+        scene.enter.focusRole.woodMan[n].visible = false;
+        scene.enter.addChild(scene.enter.focusRole.woodMan[n]);
+    }
+
+
     scene.enter.bossMan = new Bitmap(bossMan.img.small_face);
     scene.enter.bossMan.x = 100;
     scene.enter.bossMan.y = 600;
@@ -317,9 +328,20 @@ function prepareScene(){
     }
     scene.enter.addChild(scene.enter.bossMan);
 
-    //add bigMan from win scene
-    scene.enter.focusRole.bossMan = scene.win.bossMan;
-    scene.enter.addChild(scene.win.bossMan);
+
+
+
+    scene.enter.focusRole.bossMan = new Bitmap(bossMan.img.big);
+    scene.enter.focusRole.bossMan.regX = 250;
+    scene.enter.focusRole.bossMan.regY = 250;
+    scene.enter.focusRole.bossMan.x = 320;
+    scene.enter.focusRole.bossMan.y = 480;
+    scene.enter.focusRole.bossMan.visible = false;
+
+
+
+
+    scene.enter.addChild(scene.enter.focusRole.bossMan);
 
 
     //enter------------>>
@@ -468,11 +490,9 @@ function addWood(n){
 }
 
 
-//TODO:
 function alphaWood(n, alpha){
     woodMan[n].face && (woodMan[n].face.alpha = woodMan[n].back.alpha = alpha);
 }
-//TODO:
 function showWood(n, dis){
     setWoodParam(n, "dis", dis);
     setWood(n, "visible", false);
