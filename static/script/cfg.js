@@ -118,6 +118,102 @@ var selectableRole = [false,true,true,true];
 
 
 //前端可以调用的接口。
+var UI = {
+    /** 显示场景
+     * @param {String} sceneName 场景名，目前就三个 “enter”, "main", "win"
+     */
+    scene : function(sceneName){
+        showScene(sceneName);
+    },
+    /**
+     * win场景中，显示胜利者
+     * @param {String|Number} name 角色id，“boss”｜0｜1｜2
+     */
+    win : function(name){
+        showWin(name);
+    },
+    /**
+     * 在选择角色时禁止某个角色的选择
+     * @param {String|Number} name 角色id，“boss”｜0｜1｜2
+     */
+    disableSelete : function(name){
+        disableSelete(name);
+    },
+    /**
+     * 在游戏场景中，添加boss
+     */
+    addBoss : function(){
+        addBoss();
+    },
+    /** 显示boss的状态
+     * @param {String} name 状态名，目前就三个 正面“face”, 侧面"side", 背面"back"
+     */
+    showBoss : function(name){
+        showBoss(name);
+    },
+    /**
+     * 在游戏场景中，添加木头人
+     * @param {Number} id 木头人的id
+     */
+    addWood : function(id){
+        addWood(id);
+    },
+    /** 更新木头人的位置
+     * @param {Number} id 木头人的id
+     * @param {Number} distance 0~100的数值，0是起点，100是终点
+     */
+    jumpWood : function(id, distance){
+        jumpWood(id, distance);
+    },
+    /**
+     * 木头人客户端预警boss 在数 1 ， 2，  3
+     * @param {number} num 预警数数
+     */
+    woodAlert123 : function(num){
+        showAlert123(num);
+    },
+    /** 木头人客户端清除 1 2 3的警告
+     */
+    woodAlertClear : function(){
+        hideAlert123();
+    },
+    /** boss开始出现123数数按钮
+     */
+    bossStartClick : function(){
+        showDraw123();
+    },
+    /** 回调函数，boss客户端开始
+     * @param {Number} n 预警数
+     */
+    bossClick :function (n){
+        if( n = 1){
+            socket.emit('willingBegin','1');
+        }
+        else if(n === 3){
+            socket.emit('confirmTurn','1');
+        }
+    },
+    /**
+     * 回调函数，boss没有在一轮数数中 数到3
+     */
+    bossCancleClick : function(){
+        //some code
+    },
+    /**
+     *  木头人死亡
+     * @param  @param {Number} id 木头人的id
+     */
+    over: function(id){
+        overWood(id);
+    },
+
+    /** 回调函数，当用户选择角色时触发
+     * @param {String|Number} name 角色id，“boss”｜0｜1｜2
+     */
+    roleSelete : function(name){
+        //some code...
+    }
+}
 
 
 

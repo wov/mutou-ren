@@ -1,6 +1,80 @@
 //事先加载好图片
 var canvas, stage, w, h;
 
+
+var animHolder = [];
+
+
+//安全push
+Array.prototype.onepush = function(obj){
+    var index = this.indexOf(obj);
+    if(index === -1){
+        this.push(obj);
+    }
+    return this;
+}
+
+//删除
+Array.prototype.dele = function(obj){
+    var index = this.indexOf(obj);
+    if(index !== -1){
+        this.splice(index, 1);
+    }
+    return this;
+}
+
+//<<------------extend 动画-------------
+DisplayObject.prototype.anim = function(type, value, step, callback){
+    if(!this._anim_){
+        this._anim_ = [];
+        this._anim_.animNum = 0;
+    }
+    if(!this._anim_[type]){
+        this._anim_.animNum++;
+    }
+    this._anim_.onepush(type);
+    this._anim_[type] = {
+        fn:callback,
+        start : this[type],
+        end : value,
+        delt:value - this[type],
+        step: step,
+        now : 0
+    };
+    animHolder.onepush(this);
+}
+
+
+function animEase(value){
+    return (Math.sqrt(value * 4)) / 2;
+}
+
+function onAnimTick(){
+    var thisElem, animObj, type;
+    for(var n=0, nmax=animHolder.length;n < nmax; n++){
+        thisElem = animHolder[n];
+        //倒序
+        for(var i=thisElem._anim_.length - 1; i >=0; i--){
+            type = thisElem._anim_[i];
+            animObj = thisElem._anim_[type];
+            animObj.now++;
+            thisElem[type] = animObj.delt * animEase( animObj.now / animObj.step) + animObj.start;
+
+            if(animObj.now >= animObj.step){
+                animObj.fn && animObj.fn(thisElem);
+                thisElem._anim_[type] = null;
+                thisElem._anim_.dele(type);
+                thisElem._anim_.animNum--;
+                if(!thisElem._anim_.animNum){
+                    animHolder.dele(thisElem);
+                }
+            }
+        }
+    }
+}
+//--------------extend 动画------------->>
+
+
 var woodManId = 0,
     woodManNum = 3,
     woodMan = {},
@@ -10,6 +84,7 @@ var woodManId = 0,
         enter : null,
         win : null
     },
+    clickInterval = 6000,
     bossState = "back",
     bossHasInit = false,
     hasInitDraw = false;
@@ -36,6 +111,9 @@ function initDraw(){
 
    	// create a new stage and point it at our canvas:
    	stage = new Stage(canvas);
+
+
+	//Touch.enable(stage);
 
     w = canvas.width;
     h = canvas.height;
@@ -90,9 +168,11 @@ function drawMap(){
     Ticker.setInterval(17);
 
 
-    //进入选择角色场景
-    showScene("enter");
 
+
+    //进入选择入口场景
+    showScene("enter");
+    sound.bg.play();
 }
 
 
@@ -116,14 +196,13 @@ function prepareScene(){
     bfAnim.gotoAndPlay("idle");
     scene.win.addChild(bfAnim);
 
-
     scene.win.bossMan = new Bitmap(bossMan.img.big);
     scene.win.bossMan.regX = 250;
     scene.win.bossMan.regY = 250;
     scene.win.bossMan.x = 320;
     scene.win.bossMan.y = 480;
-    scene.win.addChild(scene.win.bossMan);
     scene.win.bossMan.visible = false;
+    scene.win.addChild(scene.win.bossMan);
 
     scene.win.woodMan = [];
     for(var n = 0, nmax = woodManNum; n<nmax; n++){
@@ -132,8 +211,8 @@ function prepareScene(){
         scene.win.woodMan[n].regY = 250;
         scene.win.woodMan[n].x = 320;
         scene.win.woodMan[n].y = 480;
-        scene.win.addChild(scene.win.woodMan[n]);
         scene.win.woodMan[n].visible = false;
+        scene.win.addChild(scene.win.woodMan[n]);
     }
     //win--------->>
 
@@ -188,7 +267,6 @@ function prepareScene(){
     scene.enter.focusRole = {};
 
     scene.enter.woodMan = [];
-    scene.enter.focusRole.woodMan = [];
     for(var n=0, nmax = woodManNum; n<nmax; n++){
         scene.enter.woodMan[n] = new Bitmap(woodMan[n].img.small_face);
         scene.enter.woodMan[n].regX = 94;
@@ -213,10 +291,21 @@ function prepareScene(){
         }(n);
         scene.enter.addChild(scene.enter.woodMan[n]);
 
-        //add bigMan from win scene
-        scene.enter.focusRole.woodMan[n] = scene.win.woodMan[n];
+
         scene.enter.addChild(scene.win.woodMan[n]);
     }
+    scene.enter.focusRole.woodMan = [];
+    for(var n = 0, nmax = woodManNum; n<nmax; n++){
+        scene.enter.focusRole.woodMan[n] = new Bitmap(woodMan[n].img.big);
+        scene.enter.focusRole.woodMan[n].regX = 250;
+        scene.enter.focusRole.woodMan[n].regY = 250;
+        scene.enter.focusRole.woodMan[n].x = 320;
+        scene.enter.focusRole.woodMan[n].y = 480;
+        scene.enter.focusRole.woodMan[n].visible = false;
+        scene.enter.addChild(scene.enter.focusRole.woodMan[n]);
+    }
+
+
     scene.enter.bossMan = new Bitmap(bossMan.img.small_face);
     scene.enter.bossMan.x = 100;
     scene.enter.bossMan.y = 600;
@@ -239,9 +328,20 @@ function prepareScene(){
     }
     scene.enter.addChild(scene.enter.bossMan);
 
-    //add bigMan from win scene
-    scene.enter.focusRole.bossMan = scene.win.bossMan;
-    scene.enter.addChild(scene.win.bossMan);
+
+
+
+    scene.enter.focusRole.bossMan = new Bitmap(bossMan.img.big);
+    scene.enter.focusRole.bossMan.regX = 250;
+    scene.enter.focusRole.bossMan.regY = 250;
+    scene.enter.focusRole.bossMan.x = 320;
+    scene.enter.focusRole.bossMan.y = 480;
+    scene.enter.focusRole.bossMan.visible = false;
+
+
+
+
+    scene.enter.addChild(scene.enter.focusRole.bossMan);
 
 
     //enter------------>>
@@ -250,7 +350,8 @@ function prepareScene(){
 }
 
 function roleSelete(name){
-
+    console.log("selected '" + name + "'");
+    UI.roleSelete(name);
 }
 
 
@@ -263,6 +364,7 @@ function disableSelete(name){
         scene.enter.woodMan[name].alpha = 0.4;
         scene.enter.woodMan[name].onClick = null;
     }
+    console.log("disable '" + name + "'");
 }
 
 
@@ -274,6 +376,7 @@ function showScene(sName){
         }
         scene[sName].visible = true;
     }
+    console.log("In scene '" + sName + "'");
 }
 
 function addBoss(){
@@ -319,9 +422,12 @@ function addBoss(){
     scene.main.addChild(faceman);
 
     bossHasInit = true;
+
+    console.log("Boss come in! attention.")
 }
 
-function showBoss(type, iAmBoss){
+function showBoss(type){
+    var iAmBoss = Role.current = "watcher";
     bossState = type;
     bossMan.back.visible = bossMan.face.visible = bossMan.side.visible = false;
     if(type === "back"){
@@ -350,7 +456,7 @@ function showBoss(type, iAmBoss){
         alphaWood(2, 1);
         bossStopLR();
     }
-
+    console.log("Boss turn " + type);
 }
 
 
@@ -379,8 +485,9 @@ function addWood(n){
 
     scene.main.addChild(backman);
     scene.main.addChild(man);
-}
 
+    console.log("Woodman " + n + "come in!");
+}
 
 
 function alphaWood(n, alpha){
@@ -472,6 +579,8 @@ function jumpWood(n, dis){
         jumping[n] = false;
     }
 
+    console.log("Woodman " + n + " run to " + dis);
+
 }
 
 //动画队列
@@ -519,6 +628,7 @@ function bossStartLR(){
 }
 
 function showAlert123(i){
+
     //显示 123 的预警
     for(var n=0, nmax = scene.main.alert.length; n<nmax; n++){
         if(n + 1 <= i){
@@ -528,12 +638,14 @@ function showAlert123(i){
             scene.main.alert[n].visible = false;
         }
     }
+    console.log("Alert " + num);
 }
 function hideAlert123(){
     //隐藏 123 的预警
     for(var n=0, nmax = scene.main.alert.length; n<nmax; n++){
             scene.main.alert[n].visible = false;
     }
+    console.log("Alert clear");
 }
 
 
@@ -620,14 +732,14 @@ function showDraw123(){
     drawTime = setTimeout(function(){
         hideDraw123();
         drawTime = null;
-    }, 6000);
+    }, clickInterval);
 
 
 
 
     hasDraw123 = true;
 
-
+    console.log("ok! let`s start 123 to kill them");
 }
 
 function hideDraw123(){
@@ -636,27 +748,30 @@ function hideDraw123(){
         drawClick[n].visible = false;
     }
     onClickAll123Timeout();
-    showBoss("back", Role.current);
+    showBoss("back");
+    console.log("cancel 123, again");
+}
 
+function onFirstClick(){
+    //socket.emit('willingBegin','1');
 }
 
 
 function onClick123(n){
     //开始点击123 的第 n 次
-
+    UI.bossClick(n);
+    console.log("boss click " + n);
 }
 
 function onClickAll123(){
-    socket.emit('confirmTurn','1');
+    //socket.emit('confirmTurn','1');
 //    console.log("onClickAll123");
 }
 
 function onClickAll123Timeout(){
     //超过了5秒没有能点击完成 123的回调
-}
-
-function onFirstClick(){
-    socket.emit('willingBegin','1');
+    UI.bossCancleClick();
+    console.log("boss cancel click");
 }
 
 function checkIfClickAll(){
@@ -681,12 +796,21 @@ function showWin(man){
         scene.win.woodMan[man].visible = true;
     }
 
+    console.log(man  + " Win!");
 
 }
 
 function overWood(n){
     woodMan[n].over = true;
 }
+
+
+
+
+
+
+
+
 
 
 //状态函数
@@ -697,6 +821,9 @@ function tick() {
         }
     }
     ontick();
+
+
+    onAnimTick();
     // update the stage:
     stage.update();
 }

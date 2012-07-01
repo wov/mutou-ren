@@ -33,6 +33,10 @@ soundManager.preferFlash = false;
 //soundManager.reboot();
 
 window.addEventListener('load',function(){
+    document.body.addEventListener("click", function(e){
+        e.preventDefault()
+    })
+    
     soundManager.onready(function() {
         init();
     });
