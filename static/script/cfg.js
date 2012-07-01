@@ -81,19 +81,30 @@ var INTERFACES_ON = {
         'desc'  : '返回木头人当前的位置。',
         'broadcast' : true
     },
-    '' : {
+    'initGames' : {
+
+
+    },
+    'raiseException' : {
 
 
     }
-
-
 };
 
-
 //客户端发送的接口定义
-var INTERFACES_EMIT = [
+var INTERFACES_EMIT = {
+    'ready' : {
+        'params' : null
+    },
+    'addPerson' : {
+        'params' : {
+            'roleId' : 'number'
+        }
+    }
 
-];
+
+}
+
 
 
 

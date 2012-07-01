@@ -54,7 +54,6 @@ function switchRole(){
 //        console.log(Role.current);
         switch(Role.current){
             case 'screen':
-
                 break;
             case 'wooder':
                 initWooder();

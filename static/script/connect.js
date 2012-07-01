@@ -39,9 +39,6 @@ function connectSocket(){
     socket.on('gameStart',function(){
 
 
-
-
-
     });
 
     //获取当前角色的sessionID。
