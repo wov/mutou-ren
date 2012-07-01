@@ -1,6 +1,42 @@
 //事先加载好图片
 var canvas, stage, w, h;
 
+
+var animHolder = [];
+
+
+//安全push
+Array.prototype.onepush = function(obj){
+    var index = this.indexOf(obj);
+    if(index === -1){
+        this.push(obj);
+    }
+    return this;
+}
+
+/**
+ * extend anim 动画
+ */
+DisplayObject.prototype.anim = function(type, value, step, callback){
+    if(!this._anim_){
+        this._anim_ = {};
+    }
+    this._anim_[type] = {
+        fn:callback,
+        start : this[type],
+        end : value,
+        step: step,
+        now : 0
+    };
+    animHolder.onepush(this);
+}
+
+function onAnimTick(){
+
+}
+
+
+
 var woodManId = 0,
     woodManNum = 3,
     woodMan = {},
@@ -36,6 +72,9 @@ function initDraw(){
 
    	// create a new stage and point it at our canvas:
    	stage = new Stage(canvas);
+
+
+	//Touch.enable(stage);
 
     w = canvas.width;
     h = canvas.height;
@@ -689,6 +728,14 @@ function overWood(n){
 }
 
 
+
+
+
+
+
+
+
+
 //状态函数
 function tick() {
     for(var n=0;n<3;n++){
@@ -697,6 +744,9 @@ function tick() {
         }
     }
     ontick();
+
+
+    onAnimTick();
     // update the stage:
     stage.update();
 }
