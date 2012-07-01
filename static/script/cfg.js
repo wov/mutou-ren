@@ -13,6 +13,7 @@ Role.current = null;
 Role.id = null;//只有木头人才有的id
 Role.currentSessionID = null; //刷新后重新获取的sessionID
 
+<<<<<<< HEAD
 
 //客户端监听的接口定义
 //character : 角色 [1p-主机，all-所有的,system-系统的]
@@ -102,3 +103,8 @@ var INTERFACES_EMIT = [
 
 
 
+=======
+//可选角色。
+//为数组分别是
+var selectableRole = [false,true,true,true];
+>>>>>>> 75e1926cb0fb784ef9d3dec94b123dfec9822282

@@ -7,21 +7,41 @@ function connectSocket(){
     //主机开始。准备待机。。
 
     socket.on('connect',function(){
-        socket.emit('addPerson','1');
+        socket.emit('ready');
         console.log('connect ok');
     });
 
     socket.on('disconnect',function(){
-        console.log('you are lost!!');
+        console.log('oh!no we lost you :(');
     });
 
     socket.on('initGames',function(param){
         gameParam = param;
+
+        //载入角色选择场景。
+
+
+
+
+
+
+
     });
+
+
 
     //发生异常
     socket.on('raiseException',function(data){
         console.log(data);
+    });
+
+    //开始游戏,载入游戏场景。
+    socket.on('gameStart',function(){
+
+
+
+
+
     });
 
     //获取当前角色的sessionID。
@@ -33,9 +53,7 @@ function connectSocket(){
     });
 
     //重新载入舞台
-    socket.on('reloadStage',function(data){
-        var _data = JSON.parse(data);
-        console.log(_data);
+    socket.on('reloadStage',function(_data){
         if(_data.hasOwnProperty('collection')){
             if(!!_data.collection.watcher){
                 if(Role.currentSessionID && Role.currentSessionID == _data.collection.watcher.session){
@@ -334,3 +352,29 @@ function connectSocket(){
 //    });
 //
 //}
+
+
+
+function updateSelectRole(){
+    //模拟选择场景。
+    for(var n=0;n<selectableRole.length;n++){
+        if(selectableRole[n]){
+            document.querySelectorAll('.selectRole')[n].removeAttribute('disabled');
+        }else{
+            document.querySelectorAll('.selectRole')[n].setAttribute('disabled','disabled');
+        }
+    }
+}
+
+//这里模拟绑定点击
+function tempBindEvent(){
+    var SelectRoles = document.querySelectorAll('.selectRole');
+    for(var n=0;n<SelectRoles.length;n++){
+        SelectRoles[n].addEventListener('click',function(e){
+            socket.emit('addPerson',{'roleId':(n+1)});
+            console.log(n+1);
+        });
+    }
+}
+
+tempBindEvent();
