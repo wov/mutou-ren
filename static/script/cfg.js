@@ -97,11 +97,15 @@ var INTERFACES_EMIT = {
         'params' : null,
         'desc'   : '告诉服务器已经做好准备。'
     },
+	'availablePerson' : {
+	     'params' : null,
+    	 'desc' : '获取可用角色'
+     },  
     'addPerson' : {
         'params' : {
-            'roleId' : 'number',
-			'desc' : '添加一个用户'	
-        }
+            'roleId' : 'number'
+        },
+		'desc' : '添加一个用户'	
     },
 	'walk' : {
 		'params' : {
