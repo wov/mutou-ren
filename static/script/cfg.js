@@ -101,6 +101,11 @@ var INTERFACES_EMIT = {
         'params' : {
             'roleId' : 'number'
         }
+    },
+    'walk' : {
+        'params' : {
+            'roleId' : 'number'
+        }
     }
 
 
