@@ -67,7 +67,7 @@ var INTERFACES_ON = {
         'desc' : '默认事件，当与服务器断开连接时触发。',
         'broadcast' : false
     },
-    'addPeople' : {
+    'addPerson' : {
         'character' : 'all',
         'role' : 'all',
         'statge' : 'main',
