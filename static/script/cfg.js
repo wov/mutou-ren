@@ -67,7 +67,7 @@ var INTERFACES_ON = {
         'desc' : '默认事件，当与服务器断开连接时触发。',
         'broadcast' : false
     },
-    'addPeople' : {
+    'addPerson' : {
         'character' : 'all',
         'role' : 'all',
         'statge' : 'main',
@@ -94,9 +94,15 @@ var INTERFACES_ON = {
 //客户端发送的接口定义
 var INTERFACES_EMIT = {
     'ready' : {
-        'params' : null
+        'params' : null,
+        'desc'   : '告诉服务器已经做好准备。'
     },
     'addPerson' : {
+        'params' : {
+            'roleId' : 'number'
+        }
+    },
+    'walk' : {
         'params' : {
             'roleId' : 'number'
         }

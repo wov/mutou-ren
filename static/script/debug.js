@@ -4,8 +4,8 @@ var doc = document;
 
 socket =  io.connect(cfg.socket.host);
 
-var On = doc.getElementById('on');
-
+var On = doc.getElementById('on'),
+    Clear = doc.getElementById('clear');
 
 for(var ev in  INTERFACES_ON){
     showEvent(ev);
@@ -50,6 +50,7 @@ function showEmitEvents(_obj,ev){
 
             var _text = doc.createElement('input');
             _text.setAttribute('type','text');
+            _text.setAttribute('rule',_obj.params[i]);
 
             _span.appendChild(_text);
             _div.appendChild(_span);
@@ -65,16 +66,19 @@ function showEmitEvents(_obj,ev){
     var _spans = _div.querySelectorAll('span');
 
     for(var n=0;n<_spans.length;n++){
-        _emitObj[_spans[n].getAttribute('emitEvent')] = _spans[n].querySelector('input');
+        _emitObj[_spans[n].getAttribute('emitEvent')] = _spans[n].querySelector('input').getAttribute('value') == 'number' ? ~~_spans[n].querySelector('input').value : _spans[n].querySelector('input').value;
     }
 
     btn.addEventListener('click',function(){
-        socket.emit(ev);
+        socket.emit(ev,_emitObj);
     });
-
 
     _div.appendChild(btn);
 
     Emit.appendChild(_div);
+
+    Clear.addEventListener('click',function(){
+        On.innerHTML = '';
+    })
 }
 
