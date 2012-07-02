@@ -103,8 +103,35 @@ sockets.on('connection',function(socket){
 		socket.emit('initGames',gameParams);
 		
 	});
-	
-	//�����Ϸ����
+	//get availablePerson
+	socket.on('availablePerson',function(data){
+		console.info('check is any available person?');
+		//return boss and woodman status
+		var statusList = [];
+		console.log("watcher.id:"+gameParams.collection.watcher.id);
+		if(gameParams.collection.watcher.id == 0){ // if watcher.id==0 that means we can choose this role
+			statusList.push(-1);
+		}
+		console.log(statusList);
+		var wooders = gameParams.collection.wooder;
+		console.log(wooders);
+		var allwooders = [1,2,3];
+		if (wooders.length > 0){
+			var woodersList = [];
+			for (var i=0;i<wooders.length;i++){
+				wooderList.push(wooders[i].roleId);
+			}
+			for (var i=0;i<allwooders.length;i++) {
+				if (wooderList.indexOf(allwooders[i]) == -1){
+					statusList.push(allwooders[i]);
+				}
+			}
+		}
+		socket.broadcast.emit("availablePerson",statusList);
+		socket.emit("availablePerson",statusList);
+		return 
+	});
+	//add person
 	socket.on('addPerson',function(data){
 		
 		
@@ -119,9 +146,8 @@ sockets.on('connection',function(socket){
 			socket.emit('addPerson',"-1");
 			return;
 		}
-
-		if(data == 1){
-			//�жϵ�ǰ�û��Ƿ��Ѿ�����session���ӣ���������Ϊ�˷�ֹˢ�²����������bug
+		console.log("data.roleId is:"+data.roleId);
+		if(data.roleId) {
 			console.log("socket.handshake.sessionId:"+ socket.handshake.sessionID);
 			if(socket.handshake.sessionID){
 				var sessionID = socket.handshake.sessionID;
@@ -160,7 +186,7 @@ sockets.on('connection',function(socket){
 					}
 				}
 			var rolePool = [];  //rolePool
-			if(gameParams.collection.watcher.id==0){
+			if(data.roleId == -1){
 				gameParams.collection.watcher.id = -1; //id -1Ϊboss�ı�ʶ
 				gameParams.collection.watcher.session = socket.handshake.sessionID;
 				var newRoleWatcher = gameParams.collection.watcher;
@@ -169,13 +195,11 @@ sockets.on('connection',function(socket){
 				socket.emit('success',newRoleWatcher);
 				console.info("add watcher success, watch property:",newRoleWatcher);
 			}else{
-				//��ʾ��Ϸ��ʼ
 				gameParams.gameStatus.status = 1;
 				var currentIndex = wooderCollection.length +1;
-				var newRoleWood = {roleId : currentIndex, sessionID: socket.handshake.sessionID, position:0, lastPosition:0, active:true};
+				var newRoleWood = {roleId : data.roleId, sessionID: socket.handshake.sessionID, position:0, lastPosition:0, active:true};
 				gameParams.collection.wooder.push(newRoleWood);
 				console.info("now wooder ", gameParams.collection.wooder);
-				//��ͻ��˹㲥�½�ɫ
 				socket.broadcast.emit('addPerson',newRoleWood);
 				socket.emit('success',newRoleWood);
 			}

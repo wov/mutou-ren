@@ -97,17 +97,34 @@ var INTERFACES_EMIT = {
         'params' : null,
         'desc'   : '告诉服务器已经做好准备。'
     },
+	'availablePerson' : {
+	     'params' : null,
+    	 'desc' : '获取可用角色'
+     },  
     'addPerson' : {
         'params' : {
             'roleId' : 'number'
-        }
+        },
+		'desc' : '添加一个用户'	
     },
-    'walk' : {
-        'params' : {
-            'roleId' : 'number'
-        }
-    }
-
+	'walk' : {
+		'params' : {
+			'roleId' : 'number'
+		},
+		'desc' : '角色跑动事件'
+	},
+	'willingBegin' : {
+		'params' : 'number',
+		'desc' : '转头开始'
+	},
+	'confirmTurn' : {
+		'params' : 'number',
+		'desc' : '确认转头'
+	},
+	'disconnect' : {
+		'params' : null,
+		'desc' : '失去链接'
+	},
 
 }
 
