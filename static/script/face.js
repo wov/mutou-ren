@@ -374,6 +374,7 @@ function prepareScene(){
     scene.select.bg = new Bitmap(img.selec_bg);
     scene.select.addChild(scene.select.bg);
 
+    /*
     scene.select.focusRole = {};
 
     scene.select.woodMan = [];
@@ -451,13 +452,15 @@ function prepareScene(){
     scene.select.focusRole.bossMan.y = 480;
     scene.select.focusRole.bossMan.visible = false;
     scene.select.addChild(scene.select.focusRole.bossMan);
+*/
 
-
-    scene.select.choose = new Bitmap(img.selec_cover);
-    scene.select.addChild(scene.select.selec_cover);
+    scene.select.cover = new Bitmap(img.selec_cover);
+    scene.select.cover.y = 960 - 196;
+    scene.select.addChild(scene.select.cover);
 
 
     scene.select.choose = new Bitmap(img.selected);
+    scene.select.choose.visible = false;
     scene.select.addChild(scene.select.choose);
     //select--------------->>
 
