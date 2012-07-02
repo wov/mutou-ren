@@ -86,6 +86,7 @@ var woodManId = 0,
         start:null,
         enter : null,
         main : null,
+        select : null,
         win : null
     },
     sceneNow = null,
@@ -356,7 +357,7 @@ function prepareScene(){
     scene.start.bg = new Bitmap(img.start_bg);
     scene.start.addChild(scene.start.bg);
     scene.start.bg.onClick = function (){
-        UI.scene("enter");
+        UI.scene("select");
     }
     scene.start.play_b = new Text("Click to play", "64px bold Arial", "#EC5955");
     scene.start.play_b.x = 160;
@@ -401,18 +402,8 @@ function prepareScene(){
         scene.select.addChild(scene.select.woodMan[n]);
 
 
-        scene.select.addChild(scene.win.woodMan[n]);
     }
-    scene.select.focusRole.woodMan = [];
-    for(var n = 0, nmax = woodManNum; n<nmax; n++){
-        scene.select.focusRole.woodMan[n] = new Bitmap(woodMan[n].img.big);
-        scene.select.focusRole.woodMan[n].regX = 250;
-        scene.select.focusRole.woodMan[n].regY = 250;
-        scene.select.focusRole.woodMan[n].x = 320;
-        scene.select.focusRole.woodMan[n].y = 480;
-        scene.select.focusRole.woodMan[n].visible = false;
-        scene.select.addChild(scene.select.focusRole.woodMan[n]);
-    }
+
 
 
     scene.select.bossMan = new Bitmap(bossMan.img.small_face);
@@ -439,6 +430,19 @@ function prepareScene(){
 
 
 
+    scene.select.focusRole.woodMan = [];
+    for(var n = 0, nmax = woodManNum; n<nmax; n++){
+        scene.select.focusRole.woodMan[n] = new Bitmap(woodMan[n].img.big);
+        scene.select.focusRole.woodMan[n].regX = 250;
+        scene.select.focusRole.woodMan[n].regY = 250;
+        scene.select.focusRole.woodMan[n].x = 320;
+        scene.select.focusRole.woodMan[n].y = 480;
+        scene.select.focusRole.woodMan[n].visible = true;
+        scene.select.addChild(scene.select.focusRole.woodMan[n]);
+    }
+
+
+
 
     scene.select.focusRole.bossMan = new Bitmap(bossMan.img.big);
     scene.select.focusRole.bossMan.regX = 250;
@@ -446,10 +450,6 @@ function prepareScene(){
     scene.select.focusRole.bossMan.x = 320;
     scene.select.focusRole.bossMan.y = 480;
     scene.select.focusRole.bossMan.visible = false;
-
-
-
-
     scene.select.addChild(scene.select.focusRole.bossMan);
 
 
