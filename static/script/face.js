@@ -254,6 +254,7 @@ function prepareScene(){
 
 
     //<<---------enter
+    /*
     var bg = new SpriteSheet({
         // image to use
         images: [img.hongxing],
@@ -347,7 +348,7 @@ function prepareScene(){
 
 
     scene.enter.addChild(scene.enter.focusRole.bossMan);
-
+*/
 
     //enter------------>>
 
@@ -357,16 +358,108 @@ function prepareScene(){
     scene.start.bg.onClick = function (){
         UI.scene("enter");
     }
-    scene.start.play_b = new Text("Play", "72px bold Arial", "#000");
-    scene.start.play_b.x = 250;
+    scene.start.play_b = new Text("Click to play", "64px bold Arial", "#EC5955");
+    scene.start.play_b.x = 160;
     scene.start.play_b.y = 460;
-    scene.start.play_w = new Text("Play", "72px bold Arial", "#fff");
-    scene.start.play_w.x = 250;
+    scene.start.play_w = new Text("Click to play", "64px bold Arial", "#FFF");
+    scene.start.play_w.x = 160;
     scene.start.play_w.y = 460;
     scene.start.addChild(scene.start.play_b);
     scene.start.addChild(scene.start.play_w);
 
     //start-------------->>
+
+    //<<------------select
+    scene.select.bg = new Bitmap(img.selec_bg);
+    scene.select.addChild(scene.select.bg);
+
+    scene.select.focusRole = {};
+
+    scene.select.woodMan = [];
+    for(var n=0, nmax = woodManNum; n<nmax; n++){
+        scene.select.woodMan[n] = new Bitmap(woodMan[n].img.small_face);
+        scene.select.woodMan[n].regX = 94;
+        scene.select.woodMan[n].regY = 214;
+        scene.select.woodMan[n].x = 250 + 150*n;
+        scene.select.woodMan[n].y = 600;
+        scene.select.woodMan[n].scaleX = 0.6;
+        scene.select.woodMan[n].scaleY = 0.6;
+        scene.select.woodMan[n].onClick = function(name){
+            return function(){
+                roleSelete(name);
+
+                //hide all small role
+                for(var n=0, nmax = woodManNum; n<nmax; n++){
+                    scene.select.woodMan[n].visible = false;
+                }
+                scene.select.bossMan.visible = false;
+
+                //show focus big role
+                scene.select.focusRole.woodMan[name].visible = true;
+            }
+        }(n);
+        scene.select.addChild(scene.select.woodMan[n]);
+
+
+        scene.select.addChild(scene.win.woodMan[n]);
+    }
+    scene.select.focusRole.woodMan = [];
+    for(var n = 0, nmax = woodManNum; n<nmax; n++){
+        scene.select.focusRole.woodMan[n] = new Bitmap(woodMan[n].img.big);
+        scene.select.focusRole.woodMan[n].regX = 250;
+        scene.select.focusRole.woodMan[n].regY = 250;
+        scene.select.focusRole.woodMan[n].x = 320;
+        scene.select.focusRole.woodMan[n].y = 480;
+        scene.select.focusRole.woodMan[n].visible = false;
+        scene.select.addChild(scene.select.focusRole.woodMan[n]);
+    }
+
+
+    scene.select.bossMan = new Bitmap(bossMan.img.small_face);
+    scene.select.bossMan.x = 100;
+    scene.select.bossMan.y = 600;
+    scene.select.bossMan.regX = 60;
+    scene.select.bossMan.regY = 128;
+    scene.select.bossMan.onClick = function(){
+        //return function(){
+            roleSelete("boss");
+
+            //hide all small role
+            for(var n=0, nmax = woodManNum; n<nmax; n++){
+                scene.select.woodMan[n].visible = false;
+            }
+            scene.select.bossMan.visible = false;
+
+            //show focus big role
+            scene.select.focusRole.bossMan.visible = true;
+        //}
+
+    }
+    scene.select.addChild(scene.select.bossMan);
+
+
+
+
+    scene.select.focusRole.bossMan = new Bitmap(bossMan.img.big);
+    scene.select.focusRole.bossMan.regX = 250;
+    scene.select.focusRole.bossMan.regY = 250;
+    scene.select.focusRole.bossMan.x = 320;
+    scene.select.focusRole.bossMan.y = 480;
+    scene.select.focusRole.bossMan.visible = false;
+
+
+
+
+    scene.select.addChild(scene.select.focusRole.bossMan);
+
+
+    scene.select.choose = new Bitmap(img.selec_cover);
+    scene.select.addChild(scene.select.selec_cover);
+
+
+    scene.select.choose = new Bitmap(img.selected);
+    scene.select.addChild(scene.select.choose);
+    //select--------------->>
 
 
 
@@ -396,12 +489,12 @@ function roleSelete(name){
 
 function disableSelete(name){
     if(name === "boss"){
-        scene.enter.bossMan.alpha = 0.4;
-        scene.enter.bossMan.onClick = null;
+        scene.select.bossMan.alpha = 0.4;
+        scene.select.bossMan.onClick = null;
     }
     else{
-        scene.enter.woodMan[name].alpha = 0.4;
-        scene.enter.woodMan[name].onClick = null;
+        scene.select.woodMan[name].alpha = 0.4;
+        scene.select.woodMan[name].onClick = null;
     }
     console.log("disable '" + name + "'");
 }
