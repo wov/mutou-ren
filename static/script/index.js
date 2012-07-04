@@ -16,6 +16,8 @@ var img = {}, sound = {},
         "bose_b",
         "win_bg",
         "start_bg",
+        "selec_bg",
+        "selec_cover",
         "selected"
 
     ],
