@@ -102,18 +102,24 @@ function initDraw(){
    	canvas = document.getElementById("canvas");
 
     var center = document.getElementById("center");
+    var ProgBar = document.getElementById("progBar");
 
     if(!iphone && false){
         center.style.width = 640;
         center.style.height = 900;
+        ProgBar.style['width'] = 640;
+        ProgBar.style['height'] = 900;
+
         //保证按比例
         canvas.width = 640;
         canvas.height = 960;
     }
     else{
-        center.style.height = canvas.height = innerHeight;
-        center.style.width = canvas.width = innerHeight * 2 / 3;
+        center.style.height = ProgBar.style['height'] = canvas.height = innerHeight;
+        center.style.width = ProgBar.style['width'] = canvas.width = innerHeight * 2 / 3;
     }
+
+    ProgBar.style['display'] = '';
 
    	// create a new stage and point it at our canvas:
    	stage = new Stage(canvas);

@@ -21,12 +21,17 @@ body,html{margin: 0;padding:0;background:#333;}
     margin: 0 auto;
 }
 
+.progBox{
+    position: absolute;
+    top:0;
+    width: 100%;
+}
+
 .progBar{
-    width:100%;
     text-align: center;
     color: white;
-    font-size: 48;
-    position:absolute;
+    background: #f3f3f3;
+    margin: 0 auto;
 }
 
 audio {display:none;}
