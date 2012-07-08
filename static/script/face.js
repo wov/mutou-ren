@@ -90,6 +90,7 @@ var woodManId = 0,
         win : null
     },
     sceneNow = null,
+    roleNow = null,
     clickInterval = 6000,
     bossState = "back",
     bossHasInit = false,
@@ -137,6 +138,7 @@ function initDraw(){
         woodMan[n].img = {
             small_back:img["wood_" + nI + "s_b"],
             small_face:img["wood_" + nI + "s_f"],
+            sele:img["selec_" + nI],
             big:img["wood_" + nI + "b"]
         }
     }
@@ -145,6 +147,7 @@ function initDraw(){
             small_back:img.bose_s_0,
             small_side:img.bose_s_1,
             small_face:img.bose_s_2,
+            sele:img.selec_boss,
             big:img.bose_b
     }
 
@@ -178,7 +181,7 @@ function drawMap(){
 
     //进入选择入口场景
     UI.scene("start");
-    sound.bg.play();
+    //sound.bg.play();
 }
 
 
@@ -374,6 +377,99 @@ function prepareScene(){
     scene.select.bg = new Bitmap(img.selec_bg);
     scene.select.addChild(scene.select.bg);
 
+
+
+
+
+    scene.select.roles = new Container();
+    scene.select.roles.y = 256;
+    scene.select.roles.now = 0;
+    scene.select.woodMan = [];
+    for(var n=0, nmax = woodManNum; n<nmax; n++){
+        scene.select.woodMan[n] = new Bitmap(woodMan[n].img.sele);
+        scene.select.woodMan[n].regX = 150;
+        scene.select.woodMan[n].regY = 150;
+        scene.select.woodMan[n].x = 320 + 640*(n+1);
+        scene.select.woodMan[n].y = 0;
+        scene.select.woodMan[n].enable = true;
+        scene.select.woodMan[n].onClick = function(name){
+            return function(){
+                roleSelete(name);
+            }
+        }(n);
+        scene.select.roles.addChild(scene.select.woodMan[n]);
+        scene.select.woodMan[n].selected = new Bitmap(img.selected);
+        scene.select.woodMan[n].selected.x = 250 + 640*(n+1);
+        scene.select.woodMan[n].selected.y = -60;
+        scene.select.woodMan[n].selected.alpha = 0;
+        scene.select.woodMan[n].selected.shadow = new Shadow("#454", 0, 0, 4);
+        scene.select.roles.addChild(scene.select.woodMan[n].selected);
+    }
+    scene.select.bossMan = new Bitmap(bossMan.img.sele);
+    scene.select.bossMan.x = 320;
+    scene.select.bossMan.y = 0;
+    scene.select.bossMan.regX = 150;
+    scene.select.bossMan.regY = 150;
+    scene.select.bossMan.enable = true;
+    scene.select.bossMan.onClick = function(){
+        roleSelete("boss");
+    }
+    scene.select.roles.addChild(scene.select.bossMan);
+
+    scene.select.bossMan.selected = new Bitmap(img.selected);
+    scene.select.bossMan.selected.x = 250;
+    scene.select.bossMan.selected.y = -60;
+    scene.select.bossMan.selected.alpha = 0;
+    scene.select.bossMan.selected.shadow = new Shadow("#454", 0, 0, 4);
+    scene.select.roles.addChild(scene.select.bossMan.selected);
+    scene.select.roles.next = function(){
+        if(scene.select.roles.enableNext){
+            scene.select.roles.anim("x", ++scene.select.roles.now * -640, 20);
+        }
+        scene.select.roles.checkEnable();
+    }
+    scene.select.roles.prev = function(){
+        if(scene.select.roles.enablePrev){
+            scene.select.roles.anim("x", --scene.select.roles.now * -640, 20);
+        }
+        scene.select.roles.checkEnable();
+    }
+    scene.select.roles.checkEnable = function(){
+        if(scene.select.roles.now > 0){
+            scene.select.roles.enablePrev = true;
+            scene.select.prev.alpha = 1;
+        }
+        else{
+            scene.select.roles.enablePrev = false;
+            scene.select.prev.alpha = 0.3;
+        }
+        if(scene.select.roles.now < woodManNum){
+            scene.select.roles.enableNext = true;
+            scene.select.next.alpha = 1;
+        }
+        else{
+            scene.select.roles.enableNext = false;
+            scene.select.next.alpha = 0.3;
+        }
+
+    }
+    scene.select.addChild(scene.select.roles);
+
+    scene.select.next = new Bitmap(img.arrow_r);
+    scene.select.next.x = 500;
+    scene.select.next.y = 220;
+    scene.select.next.onClick = scene.select.roles.next;
+    scene.select.addChild(scene.select.next);
+
+    scene.select.prev = new Bitmap(img.arrow_l);
+    scene.select.prev.x = 40;
+    scene.select.prev.y = 220;
+    scene.select.prev.onClick = scene.select.roles.prev;
+    scene.select.addChild(scene.select.prev);
+    scene.select.roles.checkEnable();
+
+
+
     /*
     scene.select.focusRole = {};
 
@@ -469,6 +565,50 @@ function prepareScene(){
 
 }
 
+function roleSelete(name, unmsg){
+
+    if((name === roleNow ||
+        (name === "boss" && !scene.select.bossMan.enable) ||
+        (name !== "boss" && !scene.select.woodMan[name].enable)) && !unmsg){
+        return;
+    }
+    reflashRoleStatus();
+
+
+
+    if(name === "boss" && scene.select.bossMan.enable){
+        scene.select.bossMan.selected.alpha = 1;
+    }
+    else if(name !== "boss" && scene.select.woodMan[name].enable){
+        scene.select.woodMan[name].selected.alpha = 1;
+    }
+    roleNow = name;
+    if(!unmsg){
+        console.log("selected '" + name + "'");
+        UI.roleSelete(name);
+    }
+}
+function reflashRoleStatus(){
+    for(var n=0,nmax = woodManNum;n<nmax; n++){
+        if(scene.select.woodMan[n].enable){
+            scene.select.woodMan[n].alpha = 1;
+            scene.select.woodMan[n].selected.alpha = 0;
+        }
+        else{
+            scene.select.woodMan[n].alpha = 0.4;
+            scene.select.woodMan[n].selected.alpha = 0.4;
+        }
+    }
+    if(scene.select.bossMan.enable){
+        scene.select.bossMan.alpha = 1;
+        scene.select.bossMan.selected.alpha = 0;
+    }
+    else{
+        scene.select.bossMan.alpha = 0.4;
+        scene.select.bossMan.selected.alpha = 0.4;
+    }
+}
+
 function startFlashPlay(){
     if(scene.start.play_w.alpha == 0){
         scene.start.play_w.anim("alpha", 1, 60, startFlashPlay);
@@ -484,21 +624,20 @@ function stopFlashPlay(){
     animHolder.dele(scene.start.play_w);
 }
 
-function roleSelete(name){
-    console.log("selected '" + name + "'");
-    UI.roleSelete(name);
-}
 
 
 function disableSelete(name){
     if(name === "boss"){
-        scene.select.bossMan.alpha = 0.4;
-        scene.select.bossMan.onClick = null;
+        scene.select.bossMan.enable = false;
     }
     else{
-        scene.select.woodMan[name].alpha = 0.4;
-        scene.select.woodMan[name].onClick = null;
+        scene.select.woodMan[name].enable = false;
     }
+    reflashRoleStatus();
+    if(roleNow != null){
+        roleSelete(roleNow, true);
+    }
+
     console.log("disable '" + name + "'");
 }
 

@@ -18,6 +18,12 @@ var img = {}, sound = {},
         "start_bg",
         "selec_bg",
         "selec_cover",
+        "selec_1",
+        "selec_2",
+        "selec_3",
+        "selec_boss",
+        "arrow_r",
+        "arrow_l",
         "selected"
 
     ],

@@ -142,13 +142,13 @@ var selectableRole = [false,true,true,true];
 //前端可以调用的接口。
 var UI = {
     /** 显示场景
-     * @param {String} sceneName 场景名，目前就三个 “enter”, "main", "win"
+     * @param {String} sceneName 场景名，目前四个“start”, "select",  "main", "win"
      */
     scene : function(sceneName){
         showScene(sceneName);
     },
     /** 回调函数，当进入某个场景后回调
-     *  @param {String} sceneName 场景名，目前就三个 “enter”, "main", "win"
+     *  @param {String} sceneName 场景名，目前四个“start”, "select",  "main", "win"
      */
     active : function(sceneName){
         //some code
