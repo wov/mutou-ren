@@ -39,6 +39,15 @@ var INTERFACES_ON = {
         'statge' : 'loading',
         'broadcast' : false
     },
+    'availablePerson' : {
+    	'character' : 'system',
+    	'role' : '',
+    	'desc' : '检查当前可选人物',
+    },
+    'addPerson' : {
+    	'desc' : '添加用户，若collection为空，表明未初始化，返回noinit，如果gameParams.collection.wooder长度大于2 \
+    	表明人数已满，返回－1,其他，返回添加的用户对象'
+    } ,
     'playerNum' : {
         'character' : '',
         'role' : '',

@@ -72,6 +72,9 @@ function showEmitEvents(_obj,ev){
     btn.setAttribute('type','button');
 
 
+
+    btn.addEventListener('click',function(){
+    	
     var _emitThing;
     if('object' === typeof(_obj.params)){
         _emitThing = {};
@@ -82,8 +85,8 @@ function showEmitEvents(_obj,ev){
     }else{
         _emitThing = !!_obj.params == 'number' ? ~~_div.querySelector('input').value : _div.querySelector('input').value;
     }
-
-    btn.addEventListener('click',function(){
+    	
+    	
         socket.emit(ev,_emitThing);
     });
 

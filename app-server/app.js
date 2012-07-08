@@ -1,6 +1,5 @@
-
 /**
- * Module dependencies.
+ * Module dependencies
  */
 
 var express = require('express')
@@ -78,28 +77,30 @@ sockets.on('connection',function(socket){
 	console.info("client have connect to server");
 	socket.on('ready',function(data){
 		console.info("recieve ",data,"from client");
-		//����Ĭ�ϲ���
-		gameParams = {
-				config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:60},
-				gameStatus:{winner:0,currentTime:0,status:3,lastWalkId:0,lastWalkRoleId:0,turnLock:false},
-				role:{
-				      1:{name:'role1',source:'01'},
-				      2:{name:'role2',source:'02'},
-				      3:{name:'role3',source:'03'},
-				      4:{name:'role4',source:'04'}
-					},
-				collection:{
-					watcher:{
-						id:0,
-						session:0,
-						watchTime:0,
-						turnWilling:false,
-						turning:false
-					},
-					wooder:[],
-				}
-		};
-		console.info('have init gameParams ',gameParams);
+		if(!gameParams){
+			//init gameParams
+			gameParams = {
+					config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:60},
+					gameStatus:{winner:0,currentTime:0,status:3,lastWalkId:0,lastWalkRoleId:0,turnLock:false},
+					role:{
+				      	1:{name:'role1',source:'01'},
+				      	2:{name:'role2',source:'02'},
+				      	3:{name:'role3',source:'03'},
+				      	4:{name:'role4',source:'04'}
+						},
+					collection:{
+						watcher:{
+							id:0,
+							session:0,
+							watchTime:0,
+							turnWilling:false,
+							turning:false
+						},
+						wooder:[],
+					}
+			};	
+		}
+		
 		socket.emit('initGames',gameParams);
 		
 	});
@@ -112,29 +113,35 @@ sockets.on('connection',function(socket){
 		if(gameParams.collection.watcher.id == 0){ // if watcher.id==0 that means we can choose this role
 			statusList.push(-1);
 		}
-		console.log(statusList);
 		var wooders = gameParams.collection.wooder;
 		console.log(wooders);
 		var allwooders = [1,2,3];
+		
 		if (wooders.length > 0){
 			var woodersList = [];
 			for (var i=0;i<wooders.length;i++){
-				wooderList.push(wooders[i].roleId);
+				woodersList.push(wooders[i].roleId);
 			}
 			for (var i=0;i<allwooders.length;i++) {
-				if (wooderList.indexOf(allwooders[i]) == -1){
+				console.log("==wodersList==");
+				console.log(woodersList);
+				console.log("==allwooders[i]");
+				console.log(allwooders[i]);
+				console.log(woodersList.indexOf(allwooders[i]));
+				if (woodersList.indexOf(allwooders[i].toString()) == -1){
 					statusList.push(allwooders[i]);
 				}
 			}
+		}else{
+			statusList = statusList.concat(allwooders);
 		}
 		socket.broadcast.emit("availablePerson",statusList);
 		socket.emit("availablePerson",statusList);
 		return 
 	});
+	
 	//add person
 	socket.on('addPerson',function(data){
-		
-		
 		//check wheather game init?
 		console.info("recieve add Person Request and Deal With It");
 		if(!gameParams.collection){
@@ -146,6 +153,7 @@ sockets.on('connection',function(socket){
 			socket.emit('addPerson',"-1");
 			return;
 		}
+		console.log(data)
 		console.log("data.roleId is:"+data.roleId);
 		if(data.roleId) {
 			console.log("socket.handshake.sessionId:"+ socket.handshake.sessionID);
@@ -160,16 +168,10 @@ sockets.on('connection',function(socket){
 					}else{
 						var collection = gameParams.collection;
 						var wooder = collection.wooder;
-						console.log("==============");
-						console.log(collection);
-						console.log(wooder);
-						console.log("==============");
 						if(wooder.length > 0){
 							for(var i=0;i< wooder.length;i++){
-								console.log("############");
-								console.log(wooder[i].sessionID+"==?"+sessionID);
-								console.log(wooder[i]);
-								console.log("############");
+								console.log(wooder[i].sessionId);
+								console.log(sessionID);
 								if (wooder[i].sessionID == sessionID){
 									return true;
 									}
@@ -178,10 +180,11 @@ sockets.on('connection',function(socket){
 					}
 				return false;
 				}
+				
 				if(role_in_list(sessionID,gameParams)){
 					socket.emit("raiseException",-2);
 					socket.emit("sendCurrentSessionID",sessionID);
-					socket.emit("reloadStage",JSON.stringify(gameParams));
+					socket.emit("reloadStage",gameParams);
 					return;
 					}
 				}
