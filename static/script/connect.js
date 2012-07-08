@@ -7,7 +7,6 @@ function connectSocket(){
     //主机开始。准备待机。。
 
     socket.on('connect',function(){
-        socket.emit('ready');
         console.log('connect ok');
     });
 
@@ -17,15 +16,28 @@ function connectSocket(){
 
     socket.on('initGames',function(param){
         gameParam = param;
+        socket.emit('availablePerson');
+    });
 
-        //载入角色选择场景。
+    //可选择角色。。。
+    socket.on('availablePerson',function(param){
+        console.log(param);
 
+        if(param.indexOf(-1) == -1){
+            UI.disableSelete('boss');
+        }
 
+        if(param.indexOf(1) == -1){
+            UI.disableSelete(0);
+        }
 
+        if(param.indexOf(2) == -1){
+            UI.disableSelete(1);
+        }
 
-
-
-
+        if(param.indexOf(3) == -1){
+            UI.disableSelete(2);
+        }
     });
 
 

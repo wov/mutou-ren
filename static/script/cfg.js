@@ -1,7 +1,9 @@
 var cfg = {};
 
 cfg.socket = {};
-cfg.socket.host = 'http://' + location.hostname + ':3000';
+//cfg.socket.host = 'http://' + location.hostname + ':3000';
+cfg.socket.host = 'http://192.168.2.2:3000';
+
 
 var gameParam = {};
 
