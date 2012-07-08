@@ -24,6 +24,7 @@ var img = {}, sound = {},
         "selec_boss",
         "arrow_r",
         "arrow_l",
+        "bose_s_b",
         "selected"
 
     ],
