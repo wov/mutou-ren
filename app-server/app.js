@@ -49,7 +49,6 @@ app.listen(3000, function(){
 
 var sio = io.listen(app);
 var sockets = sio.sockets;
-var gameParams = {};
 
 var connectUtils = require('connect').utils;
 var parseSignedCookie = connectUtils.parseSignedCookie;
@@ -71,13 +70,15 @@ sio.set('authorization', function (data, accept) {
     accept(null, true);
 });
 
-
+var gameParams = gameParams || null
 sockets.on('connection',function(socket){
 	console.info("SessionID:"+ socket.handshake.sessionID );
 	console.info("client have connect to server");
 	socket.on('ready',function(data){
-		console.info("recieve ",data,"from client");
+		console.log(gameParams);
+		console.log(!gameParams);
 		if(!gameParams){
+			console.log("init gameParams");
 			//init gameParams
 			gameParams = {
 					config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:60},
@@ -109,8 +110,7 @@ sockets.on('connection',function(socket){
 		console.info('check is any available person?');
 		//return boss and woodman status
 		var statusList = [];
-		console.log("watcher.id:"+gameParams.collection.watcher.id);
-		if(gameParams.collection.watcher.id == 0){ // if watcher.id==0 that means we can choose this role
+		if(!!gameParams.collection.watcher && gameParams.collection.watcher.id == 0){ // if watcher.id==0 that means we can choose this role
 			statusList.push(-1);
 		}
 		var wooders = gameParams.collection.wooder;
@@ -123,11 +123,6 @@ sockets.on('connection',function(socket){
 				woodersList.push(wooders[i].roleId);
 			}
 			for (var i=0;i<allwooders.length;i++) {
-				console.log("==wodersList==");
-				console.log(woodersList);
-				console.log("==allwooders[i]");
-				console.log(allwooders[i]);
-				console.log(woodersList.indexOf(allwooders[i]));
 				if (woodersList.indexOf(allwooders[i].toString()) == -1){
 					statusList.push(allwooders[i]);
 				}
