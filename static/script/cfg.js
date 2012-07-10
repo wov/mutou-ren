@@ -1,9 +1,8 @@
 var cfg = {};
 
 cfg.socket = {};
-//cfg.socket.host = 'http://' + location.hostname + ':3000';
-cfg.socket.host = 'http://192.168.2.2:3000';
-
+cfg.socket.host = 'http://' + location.hostname + ':3000';
+//cfg.socket.host = 'http://192.168.2.2:3000';
 
 var gameParam = {};
 
@@ -78,13 +77,6 @@ var INTERFACES_ON = {
         'desc' : '默认事件，当与服务器断开连接时触发。',
         'broadcast' : false
     },
-    'addPerson' : {
-        'character' : 'all',
-        'role' : 'all',
-        'statge' : 'main',
-        'desc' : '有新的角色加入到游戏中来。',
-        'broadcast' : true
-    },
     'returnPositionInfo' : {
         'character' : 'all',
         'role'  : 'all',
@@ -135,7 +127,7 @@ var INTERFACES_EMIT = {
 	'disconnect' : {
 		'params' : null,
 		'desc' : '失去链接'
-	},
+	}
 
 }
 
