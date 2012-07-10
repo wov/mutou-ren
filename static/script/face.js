@@ -25,23 +25,25 @@ Array.prototype.dele = function(obj){
 
 //<<------------extend 动画-------------
 DisplayObject.prototype.anim = function(type, value, step, callback){
-    if(!this._anim_){
-        this._anim_ = [];
-        this._anim_.animNum = 0;
+    if(this[type] != value){
+        if(!this._anim_){
+            this._anim_ = [];
+            this._anim_.animNum = 0;
+        }
+        if(!this._anim_[type]){
+            this._anim_.animNum++;
+        }
+        this._anim_.onepush(type);
+        this._anim_[type] = {
+            fn:callback,
+            start : this[type],
+            end : value,
+            delt:value - this[type],
+            step: step,
+            now : 0
+        };
+        animHolder.onepush(this);
     }
-    if(!this._anim_[type]){
-        this._anim_.animNum++;
-    }
-    this._anim_.onepush(type);
-    this._anim_[type] = {
-        fn:callback,
-        start : this[type],
-        end : value,
-        delt:value - this[type],
-        step: step,
-        now : 0
-    };
-    animHolder.onepush(this);
 }
 
 
@@ -51,7 +53,7 @@ function animEase(value){
 
 function onAnimTick(){
     var thisElem, animObj, type;
-    for(var n=0, nmax=animHolder.length;n < nmax; n++){
+    for(var n=animHolder.length -1;n >=0; n--){
         thisElem = animHolder[n];
         //倒序
         for(var i=thisElem._anim_.length - 1; i >=0; i--){
@@ -68,8 +70,7 @@ function onAnimTick(){
                     animHolder.dele(thisElem);
                 }
                 setTimeout(function(){
-
-                animObj.fn && animObj.fn(thisElem);
+                    animObj.fn && animObj.fn(thisElem);
                 })
             }
         }
@@ -151,6 +152,7 @@ function initDraw(){
     bossMan = {};
     bossMan.img = {
             small_back:img.bose_s_0,
+            small_back_s:img.bose_s_b,
             small_side:img.bose_s_1,
             small_face:img.bose_s_2,
             sele:img.selec_boss,
@@ -476,94 +478,31 @@ function prepareScene(){
 
 
 
-    /*
+
     scene.select.focusRole = {};
-
-    scene.select.woodMan = [];
-    for(var n=0, nmax = woodManNum; n<nmax; n++){
-        scene.select.woodMan[n] = new Bitmap(woodMan[n].img.small_face);
-        scene.select.woodMan[n].regX = 94;
-        scene.select.woodMan[n].regY = 214;
-        scene.select.woodMan[n].x = 250 + 150*n;
-        scene.select.woodMan[n].y = 600;
-        scene.select.woodMan[n].scaleX = 0.6;
-        scene.select.woodMan[n].scaleY = 0.6;
-        scene.select.woodMan[n].onClick = function(name){
-            return function(){
-                roleSelete(name);
-
-                //hide all small role
-                for(var n=0, nmax = woodManNum; n<nmax; n++){
-                    scene.select.woodMan[n].visible = false;
-                }
-                scene.select.bossMan.visible = false;
-
-                //show focus big role
-                scene.select.focusRole.woodMan[name].visible = true;
-            }
-        }(n);
-        scene.select.addChild(scene.select.woodMan[n]);
-
-
-    }
-
-
-
-    scene.select.bossMan = new Bitmap(bossMan.img.small_face);
-    scene.select.bossMan.x = 100;
-    scene.select.bossMan.y = 600;
-    scene.select.bossMan.regX = 60;
-    scene.select.bossMan.regY = 128;
-    scene.select.bossMan.onClick = function(){
-        //return function(){
-            roleSelete("boss");
-
-            //hide all small role
-            for(var n=0, nmax = woodManNum; n<nmax; n++){
-                scene.select.woodMan[n].visible = false;
-            }
-            scene.select.bossMan.visible = false;
-
-            //show focus big role
-            scene.select.focusRole.bossMan.visible = true;
-        //}
-
-    }
-    scene.select.addChild(scene.select.bossMan);
-
-
-
     scene.select.focusRole.woodMan = [];
     for(var n = 0, nmax = woodManNum; n<nmax; n++){
-        scene.select.focusRole.woodMan[n] = new Bitmap(woodMan[n].img.big);
+        scene.select.focusRole.woodMan[n] = new Bitmap(woodMan[n].img.small_back);
         scene.select.focusRole.woodMan[n].regX = 250;
         scene.select.focusRole.woodMan[n].regY = 250;
         scene.select.focusRole.woodMan[n].x = 320;
-        scene.select.focusRole.woodMan[n].y = 480;
+        scene.select.focusRole.woodMan[n].y = 1100;
         scene.select.focusRole.woodMan[n].visible = true;
         scene.select.addChild(scene.select.focusRole.woodMan[n]);
     }
-
-
-
-
-    scene.select.focusRole.bossMan = new Bitmap(bossMan.img.big);
+    scene.select.focusRole.bossMan = new Bitmap(bossMan.img.small_back_s);
     scene.select.focusRole.bossMan.regX = 250;
     scene.select.focusRole.bossMan.regY = 250;
     scene.select.focusRole.bossMan.x = 320;
-    scene.select.focusRole.bossMan.y = 480;
-    scene.select.focusRole.bossMan.visible = false;
+    scene.select.focusRole.bossMan.y = 1100;
+    scene.select.focusRole.bossMan.visible = true;
     scene.select.addChild(scene.select.focusRole.bossMan);
-*/
+
 
     scene.select.cover = new Bitmap(img.selec_cover);
     scene.select.cover.y = 960 - 196;
+    scene.select.cover.visible = true;
     scene.select.addChild(scene.select.cover);
-
-
-    scene.select.choose = new Bitmap(img.selected);
-    scene.select.choose.visible = false;
-    scene.select.addChild(scene.select.choose);
     //select--------------->>
 
 
@@ -592,6 +531,8 @@ function roleSelete(name, unmsg){
     if(!unmsg){
         console.log("selected '" + name + "'");
         UI.roleSelete(name);
+
+        showFocusRole(name);
     }
 }
 function reflashRoleStatus(){
@@ -624,6 +565,24 @@ function startFlashPlay(){
     scene.start.play_w.anim("alpha", 0, 60, startFlashPlay);
     }
 
+}
+
+
+function showFocusRole(name){
+    for(var n=0;n<woodManNum;n++){
+        if(n != name){
+            scene.select.focusRole.woodMan[n].anim("y", 1100, 20);
+        }
+        else{
+            scene.select.focusRole.woodMan[n].anim("y", 900, 20);
+        }
+    }
+    if(name === "boss"){
+        scene.select.focusRole.bossMan.anim("y", 900, 20);
+    }
+    else{
+        scene.select.focusRole.bossMan.anim("y", 1100, 20);
+    }
 }
 
 function stopFlashPlay(){
