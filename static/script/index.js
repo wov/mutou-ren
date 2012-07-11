@@ -49,8 +49,8 @@ soundManager.preferFlash = false;
 
 window.addEventListener('load',function(){
     document.body.addEventListener("click", function(e){
-        e.preventDefault()
-    })
+        e.preventDefault();
+    },false);
     
     soundManager.onready(function() {
         init();
@@ -63,8 +63,47 @@ function init(){
         console.log("All source loaded");
         //init canvas after source loaded
         initDraw();
+
+        UI.active = function(uiname){
+            console.log(uiname);
+            switch(uiname){
+                case 'select':
+                    console.log('here');
+                    socket.emit('ready');
+                    break;
+                case 'main':
+
+                    break;
+            }
+        }
+
+        UI.roleSelete = function(name){
+            switch(name){
+                case 'boss' :
+                    console.log('add boss??');
+                    socket.emit('addPerson',{'roleId':-1});
+                    break;
+                case 0:
+                    socket.emit('addPerson',{'roleId':1});
+                    break;
+                case 1:
+                    socket.emit('addPerson',{'roleId':2});
+                    break;
+                case 2:
+                    socket.emit('addPerson',{'roleId':3});
+            }
+
+            UI.scene("main");
+        }
+
     });
     //console.log("stop init...");
+
+
+
+
+
+
 }
 
 function switchRole(){
