@@ -69,9 +69,11 @@ function onAnimTick(){
                 if(!thisElem._anim_.animNum){
                     animHolder.dele(thisElem);
                 }
-                setTimeout(function(){
-                    animObj.fn && animObj.fn(thisElem);
-                })
+                setTimeout(function(animObj){
+                    return function(){
+                        animObj.fn && animObj.fn(thisElem);
+                    }
+                }(animObj))
             }
         }
     }
@@ -145,6 +147,7 @@ function initDraw(){
         woodMan[n].img = {
             small_back:img["wood_" + nI + "s_b"],
             small_face:img["wood_" + nI + "s_f"],
+            walk:img["wood_" + nI + "_walk"],
             sele:img["selec_" + nI],
             big:img["wood_" + nI + "b"]
         }
@@ -571,17 +574,17 @@ function startFlashPlay(){
 function showFocusRole(name){
     for(var n=0;n<woodManNum;n++){
         if(n != name){
-            scene.select.focusRole.woodMan[n].anim("y", 1100, 20);
+            scene.select.focusRole.woodMan[n].anim("y", 1100, 10);
         }
         else{
-            scene.select.focusRole.woodMan[n].anim("y", 900, 20);
+            scene.select.focusRole.woodMan[n].anim("y", 900, 10);
         }
     }
     if(name === "boss"){
-        scene.select.focusRole.bossMan.anim("y", 900, 20);
+        scene.select.focusRole.bossMan.anim("y", 900, 10);
     }
     else{
-        scene.select.focusRole.bossMan.anim("y", 1100, 20);
+        scene.select.focusRole.bossMan.anim("y", 1100, 10);
     }
 }
 
@@ -721,17 +724,39 @@ function addWood(n){
     woodMan[n].face.x = 100 + 220*n;
     woodMan[n].face.visible = false;
 
+
+    /*
     var backman = new Bitmap(woodMan[n].img.small_back);
-    woodMan[n].back = backman;
-    woodMan[n].back.regX = 94;
-    woodMan[n].back.regY = 214;
-    woodMan[n].back.y = 945;
+    */
+
+    var backman = new SpriteSheet({
+           // image to use
+           images: [woodMan[n].img.walk],
+           // width, height & registration point of each sprite
+           frames: {width: 178, height: 202, regX: 89, regY: 101},
+           animations: {
+               walk: [0, 7, "walk", 4]
+           }
+
+       });
+    //woodMan[n].back.regX = 94;
+    //woodMan[n].back.regY = 214;
+    var backmanAnim = new BitmapAnimation(backman);
+    woodMan[n].back = backmanAnim;
+    woodMan[n].back.walk = function(){
+        backmanAnim.gotoAndPlay("walk");
+    }
+    woodMan[n].back.stop = function(){
+        backmanAnim.gotoAndStop("walk");
+    }
+    backmanAnim.gotoAndStop("walk");
+    woodMan[n].back.y = 850;
     woodMan[n].back.x = 100 + 220*n;
 
     woodMan[n].dis = 0;
 
-    scene.main.addChild(backman);
     scene.main.addChild(man);
+    scene.main.addChild(backmanAnim);
 
     console.log("Woodman " + n + "come in!");
 }
@@ -752,18 +777,32 @@ function showWood(n, dis){
         woodMan[n].back.visible = true;
     }
     var scaleValue = 1 - dis*0.004,
-        yValue = woodMan[n].oriY - dis*5.85;
+        yValue = woodMan[n].oriY - dis*6.8;
 
-    setWood(n, "y", yValue);
-    setWood(n, "scaleX", scaleValue);
-    setWood(n, "scaleY", scaleValue);
+    setWoodAnim(n, "y", yValue, true);
+    setWoodAnim(n, "scaleX", scaleValue);
+    setWoodAnim(n, "scaleY", scaleValue);
     setWoodParam(n, "scaleY", 1 - dis*0.004);
 
 }
 //设置图形显示属性
 function setWood(n, type, value){
-    woodMan[n].face[type] = woodMan[n].back[type] = value;
+    woodMan[n].back[type] = woodMan[n].back[type] = value;
 }
+function setWoodAnim(n, type, value, execCallback){
+    if(value == woodMan[n].back[type]){
+        return;
+    }
+
+    var animTime = 60 * Math.abs( (value - woodMan[n].back[type])/value);
+    animTime = animTime > 180 ? 180 : parseInt(animTime, 10);
+    animTime = animTime < 32 ? 32 : animTime;
+    woodMan[n].back.walk();
+    woodMan[n].back.anim(type, value, animTime, execCallback ? function(){
+        woodMan[n].back.stop();
+    } : null);
+}
+
 //获取参数
 function getWoodParam(n, type){
     return woodMan[n][type];
@@ -773,13 +812,15 @@ function setWoodParam(n, type, value){
     woodMan[n][type] = value;
 }
 
-var jumping = [false, false, false];
+//var jumping = [false, false, false];
 
 function jumpWood(n, dis){
     if(!woodMan[n].over && getWoodParam(n, "dis") != dis){
-        jumping[n] = true;
+        //jumping[n] = true;
 
         showWood(n, dis);
+        /*
+
         woodMan[n].jumpState = woodMan[n].jumpState ? woodMan[n].jumpState : 0;
         if(!woodMan[n].jumpState){
             setWood(n, "scaleY", getWoodParam(n, "scaleY")*1.05);
@@ -819,11 +860,12 @@ function jumpWood(n, dis){
             woodMan[n].jumpState = 0;
             jumping[n] = false;
         }
+        */
 
     }
     else{
         showWood(n, getWoodParam(n, "dis"));
-        jumping[n] = false;
+        //jumping[n] = false;
     }
 
     console.log("Woodman " + n + " run to " + dis);

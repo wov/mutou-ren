@@ -25,6 +25,9 @@ var img = {}, sound = {},
         "arrow_r",
         "arrow_l",
         "bose_s_b",
+        "wood_1_walk",
+        "wood_2_walk",
+        "wood_3_walk",
         "selected"
 
     ],
