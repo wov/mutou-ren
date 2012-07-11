@@ -89,15 +89,12 @@ function connectSocket(){
 
     //connect the server success.
     socket.on('success',function(data){
-//        console.log('');
-
-
         if(data === 'noInit'){
             console.log('can not join the game! sorry');
             return;
         }
         if(data === '-1'){
-            alert('房间人数已满。');
+            console.error('房间人数已满。');
             return;
         }
 
@@ -113,26 +110,6 @@ function connectSocket(){
             addWood(~~data.roleId - 1);
             Role.current = 'wooder';
             Role.id = ~~data.roleId;
-
-
-
-        }
-
-
-        //todo:change here
-        if(data.roleId == 1){
-            addBoss();
-        }
-
-        if(data.roleId == 2){
-            addBoss();
-            addWood(0);
-        }
-
-        if(data.roleId == 3){
-            addBoss();
-            addWood(0);
-            addWood(1);
         }
 
         switchRole();

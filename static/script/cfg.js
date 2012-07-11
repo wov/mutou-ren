@@ -85,13 +85,15 @@ var INTERFACES_ON = {
         'broadcast' : true
     },
     'initGames' : {
-
-
+        'desc' : '初始化服务器'
     },
     'raiseException' : {
 
-
+    },
+    'success' : {
+        'desc' : '成功连接至服务器。'
     }
+
 };
 
 //客户端发送的接口定义
