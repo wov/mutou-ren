@@ -92,6 +92,9 @@ var INTERFACES_ON = {
     },
     'success' : {
         'desc' : '成功连接至服务器。'
+    },
+    'alert' : {
+        'desc' : '从服务端返回的alert信息。直接传回alert的内容。'
     }
 
 };

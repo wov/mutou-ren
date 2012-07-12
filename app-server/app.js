@@ -34,14 +34,7 @@ app.configure('production', function(){
 });
 
 // Routes
-
 app.get('/', routes.index);
-app.get('/test/', function(req,res){
-	res.render('test', { title: 'Express' });
-});
-app.get('/hello/', function(req,res){
-	res.send("this is my first node app");
-});
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
@@ -70,13 +63,15 @@ sio.set('authorization', function (data, accept) {
     accept(null, true);
 });
 
-var gameParams = gameParams || null
+var gameParams = gameParams || null;
+
+//可选角色。
+var statusList = statusList || [];
+
 sockets.on('connection',function(socket){
 	console.info("SessionID:"+ socket.handshake.sessionID );
 	console.info("client have connect to server");
 	socket.on('ready',function(data){
-		console.log(gameParams);
-		console.log(!gameParams);
 		if(!gameParams){
 			console.log("init gameParams");
 			//init gameParams
@@ -101,15 +96,18 @@ sockets.on('connection',function(socket){
 					}
 			};	
 		}
+
+
+
+
 		
-		socket.emit('initGames',gameParams);
+//		socket.emit('initGames',gameParams);
 		
 	});
 	//get availablePerson
 	socket.on('availablePerson',function(data){
 		console.info('check is any available person?');
 		//return boss and woodman status
-		var statusList = [];
 		if(!!gameParams.collection.watcher && gameParams.collection.watcher.id == 0){ // if watcher.id==0 that means we can choose this role
 			statusList.push(-1);
 		}
@@ -122,17 +120,17 @@ sockets.on('connection',function(socket){
 			for (var i=0;i<wooders.length;i++){
 				woodersList.push(wooders[i].roleId);
 			}
-			for (var i=0;i<allwooders.length;i++) {
-				if (woodersList.indexOf(allwooders[i].toString()) == -1){
-					statusList.push(allwooders[i]);
+			for (var j=0;j<allwooders.length;j++) {
+				if (woodersList.indexOf(allwooders[j].toString()) == -1){
+					statusList.push(allwooders[j]);
 				}
 			}
 		}else{
 			statusList = statusList.concat(allwooders);
 		}
-		socket.broadcast.emit("availablePerson",statusList);
+
 		socket.emit("availablePerson",statusList);
-		return 
+		return;
 	});
 	
 	//add person
@@ -148,9 +146,13 @@ sockets.on('connection',function(socket){
 			socket.emit('addPerson',"-1");
 			return;
 		}
-		console.log(data)
+		console.log(data);
 		console.log("data.roleId is:"+data.roleId);
-		if(data.roleId) {
+		if(data.hasOwnProperty('roleId') && [-1,1,2,3].indexOf(data.roleId) !== -1) {
+            //角色已经被选择。
+            if(statusList.indexOf(data.roleId) === -1){socket.emit('alert','角色已经被人抢选了，请选择其他角色。');return;}
+
+            //session should judge @ready event,not here!!
 			console.log("socket.handshake.sessionId:"+ socket.handshake.sessionID);
 			if(socket.handshake.sessionID){
 				var sessionID = socket.handshake.sessionID;
@@ -203,7 +205,10 @@ sockets.on('connection',function(socket){
 			}
 				return;
 			
-		}
+		}else{
+            console.log('参数异常');
+            return;
+        }
 	});
 	
 	//������·�¼�
@@ -284,5 +289,17 @@ sockets.on('connection',function(socket){
 	
 
 });
+
+//delete a element form array.
+function rmArrEle(arr,val){
+
+
+    arr.forEach(index,function(){
+
+    });
+
+
+
+}
 
 

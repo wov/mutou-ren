@@ -134,7 +134,11 @@ function connectSocket(){
         showBoss("side");
     });
 
-//    showBoss("face", true)
+
+    socket.on('alert',function(data){
+        alert(data);
+    });
+
 
 //加入一个新的玩家
     socket.on('addPerson',function(data){
