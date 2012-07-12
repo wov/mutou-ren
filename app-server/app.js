@@ -66,7 +66,7 @@ sio.set('authorization', function (data, accept) {
 var gameParams = gameParams || null;
 
 //可选角色。
-var statusList = statusList || [];
+var statusList = statusList || [-1,1,2,3];
 
 sockets.on('connection',function(socket){
 	console.info("SessionID:"+ socket.handshake.sessionID );
@@ -97,37 +97,69 @@ sockets.on('connection',function(socket){
 			};	
 		}
 
+        //			console.log("socket.handshake.sessionId:"+ socket.handshake.sessionID);
+			if(socket.handshake.sessionID){
+				var sessionID = socket.handshake.sessionID;
+				console.log(sessionID);
+				var role_in_list = function(sessionID,gameParams){
+					console.log(gameParams.collection.watcher.session+"==?"+sessionID);
+					if(gameParams.collection.watcher.session && gameParams.collection.watcher.session == sessionID){
+						console.log("Am'I Here?");
+						return true;
+					}else{
+						var collection = gameParams.collection;
+						var wooder = collection.wooder;
+						if(wooder.length > 0){
+							for(var i=0;i< wooder.length;i++){
+								console.log(wooder[i].sessionId);
+								console.log(sessionID);
+								if (wooder[i].sessionID == sessionID){
+									return true;
+									}
+								}
+						}
+					}
+				return false;
+				}
 
+				if(role_in_list(sessionID,gameParams)){
+					socket.emit("raiseException",-2);
+					socket.emit("sendCurrentSessionID",sessionID);
+					socket.emit("reloadStage",gameParams);
+					return;
+					}
+				}
 
-
-		
 //		socket.emit('initGames',gameParams);
-		
 	});
+
+
 	//get availablePerson
 	socket.on('availablePerson',function(data){
 		console.info('check is any available person?');
 		//return boss and woodman status
-		if(!!gameParams.collection.watcher && gameParams.collection.watcher.id == 0){ // if watcher.id==0 that means we can choose this role
-			statusList.push(-1);
-		}
-		var wooders = gameParams.collection.wooder;
-		console.log(wooders);
-		var allwooders = [1,2,3];
-		
-		if (wooders.length > 0){
-			var woodersList = [];
-			for (var i=0;i<wooders.length;i++){
-				woodersList.push(wooders[i].roleId);
-			}
-			for (var j=0;j<allwooders.length;j++) {
-				if (woodersList.indexOf(allwooders[j].toString()) == -1){
-					statusList.push(allwooders[j]);
-				}
-			}
-		}else{
-			statusList = statusList.concat(allwooders);
-		}
+
+
+//		if(!!gameParams.collection.watcher && gameParams.collection.watcher.id == 0){ // if watcher.id==0 that means we can choose this role
+//			statusList.push(-1);
+//		}
+//		var wooders = gameParams.collection.wooder;
+//		console.log(wooders);
+//		var allwooders = [1,2,3];
+//
+//		if (wooders.length > 0){
+//			var woodersList = [];
+//			for (var i=0;i<wooders.length;i++){
+//				woodersList.push(wooders[i].roleId);
+//			}
+//			for (var j=0;j<allwooders.length;j++) {
+//				if (woodersList.indexOf(allwooders[j].toString()) == -1){
+//					statusList.push(allwooders[j]);
+//				}
+//			}
+//		}else{
+//			statusList = statusList.concat(allwooders);
+//		}
 
 		socket.emit("availablePerson",statusList);
 		return;
@@ -148,63 +180,39 @@ sockets.on('connection',function(socket){
 		}
 		console.log(data);
 		console.log("data.roleId is:"+data.roleId);
-		if(data.hasOwnProperty('roleId') && [-1,1,2,3].indexOf(data.roleId) !== -1) {
+		if(data.hasOwnProperty('roleId') && [-1,1,2,3].indexOf(~~data.roleId) !== -1) {
             //角色已经被选择。
-            if(statusList.indexOf(data.roleId) === -1){socket.emit('alert','角色已经被人抢选了，请选择其他角色。');return;}
 
-            //session should judge @ready event,not here!!
-			console.log("socket.handshake.sessionId:"+ socket.handshake.sessionID);
-			if(socket.handshake.sessionID){
-				var sessionID = socket.handshake.sessionID;
-				console.log(sessionID);
-				var role_in_list = function(sessionID,gameParams){
-					console.log(gameParams.collection.watcher.session+"==?"+sessionID);
-					if(gameParams.collection.watcher.session && gameParams.collection.watcher.session == sessionID){
-						console.log("Am'I Here?");
-						return true;
-					}else{
-						var collection = gameParams.collection;
-						var wooder = collection.wooder;
-						if(wooder.length > 0){
-							for(var i=0;i< wooder.length;i++){
-								console.log(wooder[i].sessionId);
-								console.log(sessionID);
-								if (wooder[i].sessionID == sessionID){
-									return true;
-									}
-								}
-						}		
-					}
-				return false;
-				}
-				
-				if(role_in_list(sessionID,gameParams)){
-					socket.emit("raiseException",-2);
-					socket.emit("sendCurrentSessionID",sessionID);
-					socket.emit("reloadStage",gameParams);
-					return;
-					}
-				}
+            console.log(statusList);
+            if(statusList.indexOf(~~data.roleId) === -1){socket.emit('alert','角色已经被人抢选了，请选择其他角色。');return;}
+
 			var rolePool = [];  //rolePool
 			if(data.roleId == -1){
-				gameParams.collection.watcher.id = -1; //id -1Ϊboss�ı�ʶ
+				gameParams.collection.watcher.id = -1; //id -1 BOSS
 				gameParams.collection.watcher.session = socket.handshake.sessionID;
+
+
 				var newRoleWatcher = gameParams.collection.watcher;
 				socket.broadcast.emit('addPerson',newRoleWatcher);
-				
+
 				socket.emit('success',newRoleWatcher);
 				console.info("add watcher success, watch property:",newRoleWatcher);
+
 			}else{
 				gameParams.gameStatus.status = 1;
 				var currentIndex = wooderCollection.length +1;
 				var newRoleWood = {roleId : data.roleId, sessionID: socket.handshake.sessionID, position:0, lastPosition:0, active:true};
 				gameParams.collection.wooder.push(newRoleWood);
+
+
 				console.info("now wooder ", gameParams.collection.wooder);
 				socket.broadcast.emit('addPerson',newRoleWood);
 				socket.emit('success',newRoleWood);
 			}
-				return;
-			
+
+            statusList = rmArrEle(statusList,data.roleId);
+            socket.broadcast.emit("availablePerson",statusList);
+            return;
 		}else{
             console.log('参数异常');
             return;
@@ -291,15 +299,14 @@ sockets.on('connection',function(socket){
 });
 
 //delete a element form array.
+//FIXME: if the arr has more than 2 same value. it will be a mistake.
 function rmArrEle(arr,val){
-
-
-    arr.forEach(index,function(){
-
+    arr.forEach(function(el,index){
+        if(arr[index] == val){
+            arr.splice(index,1);
+        }
     });
-
-
-
+    return arr;
 }
 
 
