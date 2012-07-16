@@ -95,6 +95,9 @@ var INTERFACES_ON = {
     },
     'alert' : {
         'desc' : '从服务端返回的alert信息。直接传回alert的内容。'
+    },
+    'win' : {
+        'desc' : 'some has win the game'
     }
 
 };
