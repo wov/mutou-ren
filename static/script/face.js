@@ -779,9 +779,13 @@ function showWood(n, dis){
     var scaleValue = 1 - dis*0.004,
         yValue = woodMan[n].oriY - dis*6.8;
 
-    setWoodAnim(n, "y", yValue, true);
-    setWoodAnim(n, "scaleX", scaleValue);
-    setWoodAnim(n, "scaleY", scaleValue);
+    var animTime = 60 * Math.abs( (yValue - woodMan[n].back.y)/yValue);
+    animTime = animTime > 180 ? 180 : parseInt(animTime, 10);
+    animTime = animTime < 32 ? 32 : animTime;
+
+    setWoodAnim(n, "y", yValue, animTime, true);
+    setWoodAnim(n, "scaleX", scaleValue, animTime);
+    setWoodAnim(n, "scaleY", scaleValue, animTime);
     setWoodParam(n, "scaleY", 1 - dis*0.004);
 
 }
@@ -789,14 +793,10 @@ function showWood(n, dis){
 function setWood(n, type, value){
     woodMan[n].back[type] = woodMan[n].back[type] = value;
 }
-function setWoodAnim(n, type, value, execCallback){
+function setWoodAnim(n, type, value, animTime, execCallback){
     if(value == woodMan[n].back[type]){
         return;
     }
-
-    var animTime = 60 * Math.abs( (value - woodMan[n].back[type])/value);
-    animTime = animTime > 180 ? 180 : parseInt(animTime, 10);
-    animTime = animTime < 32 ? 32 : animTime;
     woodMan[n].back.walk();
     woodMan[n].back.anim(type, value, animTime, execCallback ? function(){
         woodMan[n].back.stop();
@@ -819,48 +819,7 @@ function jumpWood(n, dis){
         //jumping[n] = true;
 
         showWood(n, dis);
-        /*
 
-        woodMan[n].jumpState = woodMan[n].jumpState ? woodMan[n].jumpState : 0;
-        if(!woodMan[n].jumpState){
-            setWood(n, "scaleY", getWoodParam(n, "scaleY")*1.05);
-        }
-        else if(woodMan[n].jumpState === 1){
-            setWood(n, "scaleY", getWoodParam(n, "scaleY")*1.08);
-        }
-        else if(woodMan[n].jumpState === 2){
-            setWood(n, "scaleY", getWoodParam(n, "scaleY")*1.05);
-            setWood(n, "y", woodMan[n].oriY - (getWoodParam(n, "dis") + 1)*5.85);
-        }
-        else if(woodMan[n].jumpState === 3){
-            setWood(n, "scaleY", getWoodParam(n, "scaleY"));
-            setWood(n, "y", woodMan[n].oriY - (getWoodParam(n, "dis") + 3)*5.85);
-        }
-        else if(woodMan[n].jumpState === 4){
-            setWood(n, "scaleY", getWoodParam(n, "scaleY"));
-            setWood(n, "y", woodMan[n].oriY - (getWoodParam(n, "dis") + 2)*5.85);
-        }
-        else if(woodMan[n].jumpState === 5){
-            showWood(n, dis);
-
-        }
-
-        //setWood(n, "scaleX", 1);
-        //setWood(n, "x", woodMan[n].oriX);
-
-        woodMan[n].jumpState++;
-        //console.log("jumpState:" + woodMan[n].jumpState);
-        //下一斟继续执行动画
-        if(woodMan[n].jumpState < 6){
-            tickState.push(function(){
-                jumpWood(n, dis);
-            });
-        }
-        else{
-            woodMan[n].jumpState = 0;
-            jumping[n] = false;
-        }
-        */
 
     }
     else{
