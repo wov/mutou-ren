@@ -151,7 +151,6 @@ function connectSocket(){
         }
 
         if(data.id && data.id == -1){
-//            console.log('add boss?')
             addBoss();
             Role.current = 'boss';
         }
