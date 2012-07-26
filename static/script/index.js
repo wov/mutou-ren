@@ -70,6 +70,7 @@ function init(){
                 case 'select':
                     console.log('here');
                     socket.emit('ready');
+                    socket.emit('availablePerson');
                     break;
                 case 'main':
 

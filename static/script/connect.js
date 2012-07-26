@@ -40,8 +40,6 @@ function connectSocket(){
         }
     });
 
-
-
     //发生异常
     socket.on('raiseException',function(data){
         console.log(data);
@@ -50,7 +48,10 @@ function connectSocket(){
     //开始游戏,载入游戏场景。
     socket.on('gameStart',function(){
 
+    });
 
+    socket.on('restart',function(){
+        window.location.href = '';
     });
 
     //获取当前角色的sessionID。

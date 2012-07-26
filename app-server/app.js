@@ -68,6 +68,7 @@ var gameParams = gameParams || null;
 //可选角色。
 var statusList = statusList || [-1,1,2,3];
 
+
 sockets.on('connection',function(socket){
 	console.info("SessionID:"+ socket.handshake.sessionID );
 	console.info("client have connect to server");
@@ -133,6 +134,15 @@ sockets.on('connection',function(socket){
 //		socket.emit('initGames',gameParams);
 	});
 
+
+    //重启游戏。
+    socket.on('restart',function(){
+        gameParams = null;
+        statusList = [-1,1,2,3];
+
+        socket.emit("restart",null);
+        socket.broadcast.emit("restart",null);
+    });
 
 	//get availablePerson
 	socket.on('availablePerson',function(data){
@@ -223,7 +233,6 @@ sockets.on('connection',function(socket){
         if('object' !== typeof(data)){return;}
         if(!data.hasOwnProperty('roleId')){return;}
 
-		//��ȡroleId
 		var roleId = data.roleId;
 		var stepLength = gameParams.config.stepLength;
 		var rolePositionContainer = [];
@@ -260,7 +269,6 @@ sockets.on('connection',function(socket){
 		return ;
 	})
 
-	//׼��ת���¼�
 	socket.on('willingBegin',function(data){
 		if(data == 1){
 			gameParams.collection.watcher.turnWilling = true;
@@ -296,8 +304,6 @@ sockets.on('connection',function(socket){
 	socket.on('disconnect',function(){
 
 	});
-	
-
 });
 
 //delete a element form array.
