@@ -40,8 +40,6 @@ function connectSocket(){
         }
     });
 
-
-
     //发生异常
     socket.on('raiseException',function(data){
         console.log(data);
@@ -50,7 +48,10 @@ function connectSocket(){
     //开始游戏,载入游戏场景。
     socket.on('gameStart',function(){
 
+    });
 
+    socket.on('restart',function(){
+        window.location.href = '';
     });
 
     //获取当前角色的sessionID。
@@ -121,12 +122,10 @@ function connectSocket(){
     socket.on('returnPositionInfo',function(data){
         console.log('reflash data!');
         for(var n= 0 ; n <data.length;n++){
-//            if(!jumping[n]){
-                if(n==Role.id-1){
-                    console.log(~~data[n]);
-                }
-                jumpWood(n,~~data[n]);
-//            }
+            if(n==Role.id-1){
+                console.log(~~data[n]);
+            }
+            if(!!data[n]){jumpWood(n,~~data[n]);}
         }
     });
 
@@ -153,7 +152,6 @@ function connectSocket(){
         }
 
         if(data.id && data.id == -1){
-//            console.log('add boss?')
             addBoss();
             Role.current = 'boss';
         }
@@ -177,10 +175,12 @@ function connectSocket(){
     });
 
     socket.on('win',function(data){
-        //显示胜利的画面。
-        showWin(~~data-1);
-        //todo:
-
+        showScene('win');
+        if(data == -1){
+            showWin('boss');
+        }else{
+            showWin(~~data-1);
+        }
     });
 
     socket.on('twistBackBody',function(){
@@ -189,8 +189,6 @@ function connectSocket(){
             showDraw123();
         }
     });
-
-
 
 }
 

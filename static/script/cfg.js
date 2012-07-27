@@ -88,15 +88,20 @@ var INTERFACES_ON = {
         'desc' : '初始化服务器'
     },
     'raiseException' : {
-
+        'desc' : '服务器异常。'
     },
     'success' : {
         'desc' : '成功连接至服务器。'
     },
     'alert' : {
         'desc' : '从服务端返回的alert信息。直接传回alert的内容。'
+    },
+    'win' : {
+        'desc' : 'some has win the game'
+    },
+    'restart' : {
+        'desc' : '重启游戏'
     }
-
 };
 
 //客户端发送的接口定义
@@ -132,20 +137,17 @@ var INTERFACES_EMIT = {
 	'disconnect' : {
 		'params' : null,
 		'desc' : '失去链接'
-	}
-
+	},
+    'restart'    : {
+        'params' : null,
+        'desc'   : '发送重启的指令'
+    }
 }
-
-
-
-
 
 
 //可选角色。
 //为数组分别是
 var selectableRole = [false,true,true,true];
-
-
 
 //前端可以调用的接口。
 var UI = {

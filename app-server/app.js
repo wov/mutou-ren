@@ -68,6 +68,7 @@ var gameParams = gameParams || null;
 //可选角色。
 var statusList = statusList || [-1,1,2,3];
 
+
 sockets.on('connection',function(socket){
 	console.info("SessionID:"+ socket.handshake.sessionID );
 	console.info("client have connect to server");
@@ -98,41 +99,50 @@ sockets.on('connection',function(socket){
 		}
 
         //			console.log("socket.handshake.sessionId:"+ socket.handshake.sessionID);
-			if(socket.handshake.sessionID){
-				var sessionID = socket.handshake.sessionID;
-				console.log(sessionID);
-				var role_in_list = function(sessionID,gameParams){
-					console.log(gameParams.collection.watcher.session+"==?"+sessionID);
-					if(gameParams.collection.watcher.session && gameParams.collection.watcher.session == sessionID){
-						console.log("Am'I Here?");
-						return true;
-					}else{
-						var collection = gameParams.collection;
-						var wooder = collection.wooder;
-						if(wooder.length > 0){
-							for(var i=0;i< wooder.length;i++){
-								console.log(wooder[i].sessionId);
-								console.log(sessionID);
-								if (wooder[i].sessionID == sessionID){
-									return true;
-									}
-								}
-						}
-					}
-				return false;
-				}
-
-				if(role_in_list(sessionID,gameParams)){
-					socket.emit("raiseException",-2);
-					socket.emit("sendCurrentSessionID",sessionID);
-					socket.emit("reloadStage",gameParams);
-					return;
-					}
-				}
+//			if(socket.handshake.sessionID){
+//				var sessionID = socket.handshake.sessionID;
+//				console.log(sessionID);
+//				var role_in_list = function(sessionID,gameParams){
+//					console.log(gameParams.collection.watcher.session+"==?"+sessionID);
+//					if(gameParams.collection.watcher.session && gameParams.collection.watcher.session == sessionID){
+//						console.log("Am'I Here?");
+//						return true;
+//					}else{
+//						var collection = gameParams.collection;
+//						var wooder = collection.wooder;
+//						if(wooder.length > 0){
+//							for(var i=0;i< wooder.length;i++){
+//								console.log(wooder[i].sessionId);
+//								console.log(sessionID);
+//								if (wooder[i].sessionID == sessionID){
+//									return true;
+//									}
+//								}
+//						}
+//					}
+//				return false;
+//				}
+//
+//				if(role_in_list(sessionID,gameParams)){
+//					socket.emit("raiseException",-2);
+//					socket.emit("sendCurrentSessionID",sessionID);
+//					socket.emit("reloadStage",gameParams);
+//					return;
+//					}
+//				}
 
 //		socket.emit('initGames',gameParams);
 	});
 
+
+    //重启游戏。
+    socket.on('restart',function(){
+        gameParams = null;
+        statusList = [-1,1,2,3];
+
+        socket.emit("restart",null);
+        socket.broadcast.emit("restart",null);
+    });
 
 	//get availablePerson
 	socket.on('availablePerson',function(data){
@@ -182,7 +192,6 @@ sockets.on('connection',function(socket){
 		console.log("data.roleId is:"+data.roleId);
 		if(data.hasOwnProperty('roleId') && [-1,1,2,3].indexOf(~~data.roleId) !== -1) {
             //角色已经被选择。
-
             console.log(statusList);
             if(statusList.indexOf(~~data.roleId) === -1){socket.emit('alert','角色已经被人抢选了，请选择其他角色。');return;}
 
@@ -202,8 +211,7 @@ sockets.on('connection',function(socket){
 				gameParams.gameStatus.status = 1;
 				var currentIndex = wooderCollection.length +1;
 				var newRoleWood = {roleId : data.roleId, sessionID: socket.handshake.sessionID, position:0, lastPosition:0, active:true};
-				gameParams.collection.wooder.push(newRoleWood);
-
+				gameParams.collection.wooder[data.roleId-1] = newRoleWood;
 
 				console.info("now wooder ", gameParams.collection.wooder);
 				socket.broadcast.emit('addPerson',newRoleWood);
@@ -219,20 +227,23 @@ sockets.on('connection',function(socket){
         }
 	});
 	
-	//������·�¼�
 	socket.on("walk",function(data){
 		console.log("walk object:",gameParams);
-		//��ȡroleId
+
+        if('object' !== typeof(data)){return;}
+        if(!data.hasOwnProperty('roleId')){return;}
+
 		var roleId = data.roleId;
 		var stepLength = gameParams.config.stepLength;
 		var rolePositionContainer = [];
-		if(!gameParams.collection.wooder[roleId-1].active){
+        console.log(roleId);
+		if(gameParams.collection.wooder[roleId-1] && !gameParams.collection.wooder[roleId-1].active){
 			return ;
 		}
-		//��ȡ���walk���¼�
+
 		gameParams.gameStatus.lastWalkId += 1;
 		gameParams.gameStatus.lastWalkRoleId = roleId;
-		if(gameParams.gameStatus.turnLock){ //���תͷ���¼�Ϊtrueʱ����walk���������������
+		if(gameParams.gameStatus.turnLock){
 			gameParams.collection.wooder[roleId-1].active = false;
 			socket.emit("outStage",{roleId:roleId});
 			socket.broadcast.emit("outStage",{roleId:roleId});
@@ -250,7 +261,7 @@ sockets.on('connection',function(socket){
 		console.log("calculate position: ",	gameParams.collection.wooder[roleId-1].position );
 		var wooderList  =  gameParams.collection.wooder;
 		for(var i=0;i<wooderList.length;i++){
-			rolePositionContainer[i] = gameParams.collection.wooder[i].position;
+			rolePositionContainer[i] = wooderList[i] ? wooderList[i].position : null;
 		}
 		socket.emit('returnPositionInfo',rolePositionContainer);
 		socket.broadcast.emit('returnPositionInfo',rolePositionContainer);
@@ -258,7 +269,6 @@ sockets.on('connection',function(socket){
 		return ;
 	})
 
-	//׼��ת���¼�
 	socket.on('willingBegin',function(data){
 		if(data == 1){
 			gameParams.collection.watcher.turnWilling = true;
@@ -294,8 +304,6 @@ sockets.on('connection',function(socket){
 	socket.on('disconnect',function(){
 
 	});
-	
-
 });
 
 //delete a element form array.
