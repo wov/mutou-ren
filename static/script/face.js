@@ -265,6 +265,13 @@ function prepareScene(){
         s.visible = false;
         scene.main.addChild(s);
     }
+
+    scene.main.foot = new Bitmap(img.foot);
+    scene.main.foot.x = 0;
+    scene.main.foot.y = 650;
+    //scene.main.foot.visible = false;
+    scene.main.addChild(scene.main.foot);
+
     //main-------------->>
 
 

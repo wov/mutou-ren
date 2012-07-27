@@ -28,6 +28,7 @@ var img = {}, sound = {},
         "wood_1_walk",
         "wood_2_walk",
         "wood_3_walk",
+        "foot",
         "selected"
 
     ],
