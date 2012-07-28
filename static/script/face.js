@@ -192,7 +192,7 @@ function drawMap(){
 
     //进入选择入口场景
     UI.scene("start");
-    //sound.bg.play();
+    sound.bg.play();
 }
 
 
