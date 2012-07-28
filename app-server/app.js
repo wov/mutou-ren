@@ -283,7 +283,7 @@ sockets.on('connection',function(socket){
 		if(data == 1){
 			gameParams.gameStatus.turnLock = true;
 			for(var i= 0; i< gameParams.collection.wooder.length; i++){
-				if(gameParams.collection.wooder[i].active){
+				if(gameParams.collection.wooder[i] && gameParams.collection.wooder[i].active){
 					gameParams.collection.wooder[i].lastPosition = gameParams.collection.wooder[i].position;
 				}
 				
