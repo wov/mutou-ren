@@ -151,6 +151,7 @@ var selectableRole = [false,true,true,true];
 
 //前端可以调用的接口。
 var UI = {
+
     /** 显示场景
      * @param {String} sceneName 场景名，目前四个“start”, "select",  "main", "win"
      */
@@ -162,6 +163,17 @@ var UI = {
      */
     active : function(sceneName){
         //some code
+        console.log(sceneName);
+        switch(sceneName){
+            case 'select':
+                console.log('here');
+                socket.emit('ready');
+                socket.emit('availablePerson');
+                break;
+            case 'main':
+
+                break;
+        }
     },
     /**
      * win场景中，显示胜利者
@@ -224,10 +236,10 @@ var UI = {
      * @param {Number} n 预警数
      */
     bossClick :function (n){
-        if( n = 1){
+        if( n == 1){
             socket.emit('willingBegin','1');
         }
-        else if(n === 3){
+        else if(n == 3){
             socket.emit('confirmTurn','1');
         }
     },
@@ -236,6 +248,7 @@ var UI = {
      */
     bossCancleClick : function(){
         //some code
+        socket.emit('willingCancel','1');
     },
     /**
      *  木头人死亡
@@ -250,6 +263,31 @@ var UI = {
      */
     roleSelete : function(name){
         //some code...
+        switch(name){
+            case 'boss' :
+                console.log('add boss??');
+                socket.emit('addPerson',{'roleId':-1});
+                Role.current = "boss";
+
+                break;
+            case 0:
+                socket.emit('addPerson',{'roleId':1});
+                Role.current = "boss";
+                Role.id = 1;
+                break;
+            case 1:
+                socket.emit('addPerson',{'roleId':2});
+                Role.current = "boss";
+                Role.id = 2;
+                break;
+            case 2:
+                socket.emit('addPerson',{'roleId':3});
+                Role.current = "boss";
+                Role.id = 3;
+        }
+
+        UI.scene("main");
+
     }
 }
 

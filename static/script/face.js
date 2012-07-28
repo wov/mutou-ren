@@ -234,6 +234,11 @@ function prepareScene(){
         scene.win.woodMan[n].visible = false;
         scene.win.addChild(scene.win.woodMan[n]);
     }
+
+    scene.win.restart = new Text("Click to restart", "64px bold Arial", "#000");
+    scene.win.restart.x = 140;
+    scene.win.restart.y = 800;
+    scene.win.addChild(scene.win.restart);
     //win--------->>
 
 
@@ -275,104 +280,6 @@ function prepareScene(){
     //main-------------->>
 
 
-    //<<---------enter
-    /*
-    var bg = new SpriteSheet({
-        // image to use
-        images: [img.hongxing],
-        // width, height & registration point of each sprite
-        frames: {width: 640, height: 960, regX: 0, regY: 0},
-        animations: {
-            idle: [0, 1, "idle", 32]
-        }
-    });
-
-    var bfAnim = new BitmapAnimation(bg);
-
-    bfAnim.gotoAndPlay("idle");
-    bfAnim.alpha = 0.3;
-    scene.enter.addChild(bfAnim);
-    scene.enter.focusRole = {};
-
-    scene.enter.woodMan = [];
-    for(var n=0, nmax = woodManNum; n<nmax; n++){
-        scene.enter.woodMan[n] = new Bitmap(woodMan[n].img.small_face);
-        scene.enter.woodMan[n].regX = 94;
-        scene.enter.woodMan[n].regY = 214;
-        scene.enter.woodMan[n].x = 250 + 150*n;
-        scene.enter.woodMan[n].y = 600;
-        scene.enter.woodMan[n].scaleX = 0.6;
-        scene.enter.woodMan[n].scaleY = 0.6;
-        scene.enter.woodMan[n].onClick = function(name){
-            return function(){
-                roleSelete(name);
-
-                //hide all small role
-                for(var n=0, nmax = woodManNum; n<nmax; n++){
-                    scene.enter.woodMan[n].visible = false;
-                }
-                scene.enter.bossMan.visible = false;
-
-                //show focus big role
-                scene.enter.focusRole.woodMan[name].visible = true;
-            }
-        }(n);
-        scene.enter.addChild(scene.enter.woodMan[n]);
-
-
-        scene.enter.addChild(scene.win.woodMan[n]);
-    }
-    scene.enter.focusRole.woodMan = [];
-    for(var n = 0, nmax = woodManNum; n<nmax; n++){
-        scene.enter.focusRole.woodMan[n] = new Bitmap(woodMan[n].img.big);
-        scene.enter.focusRole.woodMan[n].regX = 250;
-        scene.enter.focusRole.woodMan[n].regY = 250;
-        scene.enter.focusRole.woodMan[n].x = 320;
-        scene.enter.focusRole.woodMan[n].y = 480;
-        scene.enter.focusRole.woodMan[n].visible = false;
-        scene.enter.addChild(scene.enter.focusRole.woodMan[n]);
-    }
-
-
-    scene.enter.bossMan = new Bitmap(bossMan.img.small_face);
-    scene.enter.bossMan.x = 100;
-    scene.enter.bossMan.y = 600;
-    scene.enter.bossMan.regX = 60;
-    scene.enter.bossMan.regY = 128;
-    scene.enter.bossMan.onClick = function(){
-        //return function(){
-            roleSelete("boss");
-
-            //hide all small role
-            for(var n=0, nmax = woodManNum; n<nmax; n++){
-                scene.enter.woodMan[n].visible = false;
-            }
-            scene.enter.bossMan.visible = false;
-
-            //show focus big role
-            scene.enter.focusRole.bossMan.visible = true;
-        //}
-
-    }
-    scene.enter.addChild(scene.enter.bossMan);
-
-
-
-
-    scene.enter.focusRole.bossMan = new Bitmap(bossMan.img.big);
-    scene.enter.focusRole.bossMan.regX = 250;
-    scene.enter.focusRole.bossMan.regY = 250;
-    scene.enter.focusRole.bossMan.x = 320;
-    scene.enter.focusRole.bossMan.y = 480;
-    scene.enter.focusRole.bossMan.visible = false;
-
-
-
-
-    scene.enter.addChild(scene.enter.focusRole.bossMan);
-*/
-
-    //enter------------>>
 
     //<<-------------start
     scene.start.bg = new Bitmap(img.start_bg);
@@ -632,6 +539,18 @@ function showScene(sName){
     else{
         stopFlashPlay();
     }
+
+    if(sName === "win"){
+        scene.win.restart.visible = false;
+        scene.win.onClick = null;
+        setTimeout(function(){
+            scene.win.restart.visible = true;
+            scene.win.onClick = function(){
+                socket.emit('restart');
+            }
+        }, 3000);
+    }
+
     UI.active(sName);
     console.log("In scene '" + sName + "'");
 }
@@ -684,15 +603,15 @@ function addBoss(){
 }
 
 function showBoss(type){
-    var iAmBoss = Role.current = "watcher";
+    var iAmBoss = Role.id === null;
     bossState = type;
     bossMan.back.visible = bossMan.face.visible = bossMan.side.visible = false;
     if(type === "back"){
         bossMan.back.visible = true;
         if(iAmBoss){
-            alphaWood(0, 0.2);
-            alphaWood(1, 0.2);
-            alphaWood(2, 0.2);
+            alphaWood(0, 0.1);
+            alphaWood(1, 0.1);
+            alphaWood(2, 0.1);
         }
 
         bossStopLR();
@@ -700,9 +619,9 @@ function showBoss(type){
     else if(type === "side"){
         bossMan.side.visible = true;
         if(iAmBoss){
-            alphaWood(0, 0.2);
-            alphaWood(1, 0.2);
-            alphaWood(2, 0.2);
+            alphaWood(0, 0.1);
+            alphaWood(1, 0.1);
+            alphaWood(2, 0.1);
         }
         bossStartLR();
     }
@@ -724,11 +643,10 @@ function addWood(n){
     }
     var man = new Bitmap(woodMan[n].img.small_face);
     woodMan[n].face = man;
-    woodMan[n].face.y = woodMan[n].oriY = 945;
-    woodMan[n].face.x = woodMan[n].oriX = 10 + 210*n;
+    woodMan[n].face.y = woodMan[n].oriY = 940;
+    woodMan[n].face.x = woodMan[n].oriX = 100 + 210*n;
     woodMan[n].face.regX = 94;
     woodMan[n].face.regY = 214;
-    woodMan[n].face.x = 100 + 220*n;
     woodMan[n].face.visible = false;
 
 
@@ -740,7 +658,7 @@ function addWood(n){
            // image to use
            images: [woodMan[n].img.walk],
            // width, height & registration point of each sprite
-           frames: {width: 178, height: 202, regX: 89, regY: 101},
+           frames: {width: 178, height: 202, regX: 89, regY: 202},
            animations: {
                walk: [0, 7, "walk", 4]
            }
@@ -757,7 +675,7 @@ function addWood(n){
         backmanAnim.gotoAndStop("walk");
     }
     backmanAnim.gotoAndStop("walk");
-    woodMan[n].back.y = 850;
+    woodMan[n].back.y = 940;
     woodMan[n].back.x = 100 + 220*n;
 
     woodMan[n].dis = 0;
@@ -772,33 +690,53 @@ function addWood(n){
 function alphaWood(n, alpha){
     woodMan[n].face && (woodMan[n].face.alpha = woodMan[n].back.alpha = alpha);
 }
-function showWood(n, dis){
+function showWood(n, dis, noAni){
+    var iAmBoss = Role.id === null;
+
+
+
     setWoodParam(n, "dis", dis);
     setWood(n, "visible", false);
     if(woodMan[n].over){
         alphaWood(n, 1);
         woodMan[n].face.visible = true;
+        woodMan[n].back.visible = false;
     }
     else{
         //alphaWood(n, 1);
-        woodMan[n].back.visible = true;
+        woodMan[n].back && (woodMan[n].back.visible = true);
     }
     var scaleValue = 1 - dis*0.004,
-        yValue = woodMan[n].oriY - dis*6.8;
+        yValue = woodMan[n].oriY - dis*5.8;
 
-    var animTime = 60 * Math.abs( (yValue - woodMan[n].back.y)/yValue);
-    animTime = animTime > 180 ? 180 : parseInt(animTime, 10);
-    animTime = animTime < 32 ? 32 : animTime;
+    if(!noAni){
 
-    setWoodAnim(n, "y", yValue, animTime, true);
-    setWoodAnim(n, "scaleX", scaleValue, animTime);
-    setWoodAnim(n, "scaleY", scaleValue, animTime);
+        var animTime = 60 * Math.abs( (yValue - woodMan[n].back.y)/yValue);
+        animTime = animTime > 180 ? 180 : parseInt(animTime, 10);
+        animTime = animTime < 32 ? 32 : animTime;
+
+        setWoodAnim(n, "y", yValue, animTime, true);
+        setWoodAnim(n, "scaleX", scaleValue, animTime);
+        setWoodAnim(n, "scaleY", scaleValue, animTime);
+
+    }
+    else{
+        setWood(n, "y", yValue);
+        setWood(n, "scaleX", scaleValue);
+        setWood(n, "scaleY", scaleValue);
+        
+    }
     setWoodParam(n, "scaleY", 1 - dis*0.004);
 
 }
 //设置图形显示属性
 function setWood(n, type, value){
-    woodMan[n].back[type] = woodMan[n].back[type] = value;
+    if(woodMan[n].face && woodMan[n].back){
+
+        woodMan[n].face[type] = woodMan[n].face[type] = 
+        woodMan[n].back[type] = woodMan[n].back[type] = value;
+    }
+
 }
 function setWoodAnim(n, type, value, animTime, execCallback){
     if(value == woodMan[n].back[type]){
@@ -808,6 +746,7 @@ function setWoodAnim(n, type, value, animTime, execCallback){
     woodMan[n].back.anim(type, value, animTime, execCallback ? function(){
         woodMan[n].back.stop();
     } : null);
+    woodMan[n].face.anim(type, value, animTime);
 }
 
 //获取参数
@@ -824,10 +763,7 @@ function setWoodParam(n, type, value){
 function jumpWood(n, dis){
     if(!woodMan[n].over && getWoodParam(n, "dis") != dis){
         //jumping[n] = true;
-
         showWood(n, dis);
-
-
     }
     else{
         showWood(n, getWoodParam(n, "dis"));
@@ -863,7 +799,7 @@ function bossRadom(){
             bossMan.side.visible = true;
         bossMan.side.scaleX = -1;
     }
-    else if(radom <= 0.6 && radom >= 0.3){
+    else if(radom <= 0.6 && radom >= 0.2){
             bossMan.back.visible = false;
             bossMan.side.visible = true;
         bossMan.side.scaleX = 1;
@@ -911,15 +847,16 @@ function bossStopLR(){
 var hasDraw123;
 
 function drawOne(){
-    var s = new Shape();
-    var g = s.graphics;
-    //Head
-    g.setStrokeStyle(2, 'round', 'round');
-    g.beginStroke(Graphics.getRGB(0, 0, 0));
-    g.beginFill(Graphics.getRGB(255, 255, 0));
-    g.drawCircle(60, 60, 60); //55,53
-    g.endFill();
-    g.setStrokeStyle(1, 'round', 'round');
+    var s = new Bitmap(img.btn123);
+    // var s = new Shape();
+    // var g = s.graphics;
+    // //Head
+    // g.setStrokeStyle(2, 'round', 'round');
+    // g.beginStroke(Graphics.getRGB(0, 0, 0));
+    // g.beginFill(Graphics.getRGB(255, 255, 0));
+    // g.drawCircle(60, 60, 60); //55,53
+    // g.endFill();
+    // g.setStrokeStyle(1, 'round', 'round');
     return s;
 }
 
@@ -1015,6 +952,19 @@ function onFirstClick(){
 function onClick123(n){
     //开始点击123 的第 n 次
     UI.bossClick(n);
+
+    clearTimeout(drawTime);
+    drawTime = null;
+    if(n < 3){
+        //开始点击后，就重新及时
+       
+
+        drawTime = setTimeout(function(){
+            hideDraw123();
+            drawTime = null;
+        }, clickInterval);
+
+    }
     console.log("boss click " + n);
 }
 

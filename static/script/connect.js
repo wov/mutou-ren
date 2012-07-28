@@ -103,7 +103,7 @@ function connectSocket(){
             addBoss();
             Role.current = 'boss';
             socket.on('afterCooling',function(){
-                showDraw123();
+                UI.bossStartClick();
             });
         }
 
@@ -153,12 +153,12 @@ function connectSocket(){
 
         if(data.id && data.id == -1){
             addBoss();
-            Role.current = 'boss';
+            //Role.current = 'boss';
         }
 
         if(data.roleId && data.roleId == 1 || data.roleId == 2 || data.roleId == 3){
             addWood(~~data.roleId - 1);
-            Role.current = 'wooder';
+            //Role.current = 'wooder';
         }
     });
 
@@ -186,7 +186,7 @@ function connectSocket(){
     socket.on('twistBackBody',function(){
         showBoss("back");
         if(Role.current == 'boss'){
-            showDraw123();
+            UI.bossStartClick();
         }
     });
 

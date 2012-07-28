@@ -29,6 +29,7 @@ var img = {}, sound = {},
         "wood_2_walk",
         "wood_3_walk",
         "foot",
+        "btn123",
         "selected"
 
     ],
@@ -65,47 +66,7 @@ function init(){
         //init canvas after source loaded
         initDraw();
 
-        UI.active = function(uiname){
-            console.log(uiname);
-            switch(uiname){
-                case 'select':
-                    console.log('here');
-                    socket.emit('ready');
-                    socket.emit('availablePerson');
-                    break;
-                case 'main':
 
-                    break;
-            }
-        }
-
-        UI.roleSelete = function(name){
-            switch(name){
-                case 'boss' :
-                    console.log('add boss??');
-                    socket.emit('addPerson',{'roleId':-1});
-                    break;
-                case 0:
-                    socket.emit('addPerson',{'roleId':1});
-                    break;
-                case 1:
-                    socket.emit('addPerson',{'roleId':2});
-                    break;
-                case 2:
-                    socket.emit('addPerson',{'roleId':3});
-            }
-
-            UI.scene("main");
-        }
-
-
-        UI.bossClick = function(n){
-            if(n == 1){
-                socket.emit('willingBegin',1);
-            }else if(n == 3){
-                socket.emit('confirmTurn',1);
-            }
-        }
     });
 }
 
@@ -193,9 +154,9 @@ function initWooder(){
 
 
 function initWatcher(){
-    setInterval(function(){
+    //setInterval(function(){
         showDraw123();
-    },5000);
+    //},5000);
 }
 
 

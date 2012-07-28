@@ -179,7 +179,7 @@ sockets.on('connection',function(socket){
 	socket.on('addPerson',function(data){
 		//check wheather game init?
 		console.info("recieve add Person Request and Deal With It");
-		if(!gameParams.collection){
+		if((gameParams && !gameParams.collection) || !gameParams){
 			socket.emit('addPerson',"NoInit");
 			return;
 		}
@@ -278,6 +278,14 @@ sockets.on('connection',function(socket){
 			return;
 		}
 	});
+	socket.on('willingCancel',function(data){
+
+		gameParams.gameStatus.turnLock = false;
+		socket.broadcast.emit("twistBackBody","1");
+		socket.emit("twistBackBody","1");
+		return;
+	});
+	
 	
 	socket.on("confirmTurn",function(data){
 		if(data == 1){
@@ -299,6 +307,9 @@ sockets.on('connection',function(socket){
 			
 		}
 	});
+
+
+
 	
 	//console.info(gameParams);
 	socket.on('disconnect',function(){
