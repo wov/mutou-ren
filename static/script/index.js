@@ -57,7 +57,14 @@ window.addEventListener('load',function(){
     soundManager.onready(function() {
         init();
     });
+
+    //绑定重启
+    document.getElementById("restart").onclick = function(){
+        socket.emit("restart");
+    }
 });
+
+
 
 function init(){
     //console.log("start init...");
@@ -71,6 +78,8 @@ function init(){
 }
 
 function switchRole(){
+
+
     console.log(Role.current);
     if(Role.current){
 //        console.log(Role.current);
@@ -94,6 +103,8 @@ function switchRole(){
 //记录上次点击的地方
 var clickAreaRecord = [];
 function initWooder(){
+
+
     var d_canvas = document.getElementById('canvas');
     if("ontouchstart" in window){
         d_canvas.addEventListener('touchstart',function(e){
@@ -211,7 +222,7 @@ function initLoader(callback){
                     play : function(){
                         soundManager.play(id, {
                             onfinish: function() {
-                                //
+                                sound[soundId].play();
                             }
                         });
                     }

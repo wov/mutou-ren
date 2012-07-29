@@ -129,7 +129,7 @@ function initDraw(){
    	stage = new Stage(canvas);
 
 
-	//Touch.enable(stage);
+	Touch.enable(stage);
 
     w = canvas.width;
     h = canvas.height;
@@ -447,9 +447,10 @@ function roleSelete(name, unmsg){
     roleNow = name;
     if(!unmsg){
         console.log("selected '" + name + "'");
-        UI.roleSelete(name);
-
         showFocusRole(name);
+        setTimeout(function(){
+            UI.roleSelete(name);
+        }, 1000);
     }
 }
 function reflashRoleStatus(){
@@ -485,7 +486,7 @@ function startFlashPlay(){
 }
 
 
-function showFocusRole(name){
+function showFocusRole(name, callback){
     for(var n=0;n<woodManNum;n++){
         if(n != name){
             scene.select.focusRole.woodMan[n].anim("y", 1100, 10);
@@ -495,10 +496,10 @@ function showFocusRole(name){
         }
     }
     if(name === "boss"){
-        scene.select.focusRole.bossMan.anim("y", 900, 10);
+        scene.select.focusRole.bossMan.anim("y", 900, 10, callback);
     }
     else{
-        scene.select.focusRole.bossMan.anim("y", 1100, 10);
+        scene.select.focusRole.bossMan.anim("y", 1100, 10, callback);
     }
 }
 
@@ -894,6 +895,7 @@ function showDraw123(){
             drawClick[n].x = pos[n][0];
             drawClick[n].y = pos[n][1];
             drawClick[n].visible = true;
+            scene.main.addChild(drawClick[n]);
         }
     }
 

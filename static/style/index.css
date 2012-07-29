@@ -10,6 +10,15 @@ body,html{margin: 0;padding:0;background:#333;}
         height:100%;
         -webkit-user-select:none;
 }
+#control{
+    position: absolute;
+    top:0px;
+    left:100px;
+}
+#control button{
+
+    font-size: 18px;
+}
 
 .allbg{
     position: absolute;
@@ -19,7 +28,10 @@ body,html{margin: 0;padding:0;background:#333;}
     overflow: hidden;
     position: relative;
     margin: 0 auto;
+    z-index: 50;
 }
+
+
 
 .progBox{
     position: absolute;
@@ -30,7 +42,6 @@ body,html{margin: 0;padding:0;background:#333;}
 .progBar{
     text-align: center;
     color: white;
-    background: #f3f3f3;
     margin: 0 auto;
 }
 
