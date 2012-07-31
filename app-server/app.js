@@ -270,7 +270,7 @@ sockets.on('connection',function(socket){
 	})
 
 	socket.on('willingBegin',function(data){
-		if(data == 1){
+		if(data == 1 && gameParams && gameParams.collection){
 			gameParams.collection.watcher.turnWilling = true;
 			gameParams.collection.watcher,turnWillingTimeStamp = new Date().getTime();
 			socket.emit("twistBody",1);
@@ -279,16 +279,17 @@ sockets.on('connection',function(socket){
 		}
 	});
 	socket.on('willingCancel',function(data){
-
-		gameParams.gameStatus.turnLock = false;
-		socket.broadcast.emit("twistBackBody","1");
-		socket.emit("twistBackBody","1");
-		return;
+		if(gameParams && gameParams.gameStatus){
+			gameParams.gameStatus.turnLock = false;
+			socket.broadcast.emit("twistBackBody","1");
+			socket.emit("twistBackBody","1");
+			return;
+		}
 	});
 	
 	
 	socket.on("confirmTurn",function(data){
-		if(data == 1){
+		if(data == 1 && gameParams && gameParams.gameStatus){
 			gameParams.gameStatus.turnLock = true;
 			for(var i= 0; i< gameParams.collection.wooder.length; i++){
 				if(gameParams.collection.wooder[i] && gameParams.collection.wooder[i].active){
@@ -300,9 +301,12 @@ sockets.on('connection',function(socket){
 			socket.broadcast.emit("confirmTurn","1");
 			
 			setTimeout(function(){
-				gameParams.gameStatus.turnLock = false;
-				socket.broadcast.emit("twistBackBody","1");
-				socket.emit("twistBackBody","1");
+				if(gameParams && gameParams.gameStatus){
+					gameParams.gameStatus.turnLock = false;
+					socket.broadcast.emit("twistBackBody","1");
+					socket.emit("twistBackBody","1");
+				}
+
 			},500);
 			
 		}
