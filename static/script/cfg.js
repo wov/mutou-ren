@@ -136,6 +136,14 @@ var INTERFACES_EMIT = {
 		'params' : 'number',
 		'desc' : '转头开始'
 	},
+    'willing' : {
+        'params' : 'number',
+        'desc' : '转头开始'
+    },
+    "willingCancel" : {
+        "params" : "number",
+        "desc" : "取消转头"
+    },
 	'confirmTurn' : {
 		'params' : 'number',
 		'desc' : '确认转头'
@@ -242,12 +250,14 @@ var UI = {
      * @param {Number} n 预警数
      */
     bossClick :function (n){
-        if( n == 1){
-            socket.emit('willingBegin','1');
-        }
-        else if(n == 3){
-            socket.emit('confirmTurn','1');
-        }
+        socket.emit("willing", n.toString());
+
+        // if( n == 1){
+        //     socket.emit('willingBegin','1');
+        // }
+        // else if(n == 3){
+        //     socket.emit('confirmTurn','1');
+        // }
     },
     /**
      * 回调函数，boss没有在一轮数数中 数到3

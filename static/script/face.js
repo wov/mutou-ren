@@ -94,7 +94,7 @@ var woodManId = 0,
     },
     sceneNow = null,
     roleNow = null,
-    clickInterval = 6000,
+    clickInterval = 3000,
     bossState = "back",
     bossHasInit = false,
     hasInitDraw = false;
@@ -171,6 +171,22 @@ function initDraw(){
     hasInitDraw = true;
 }
 
+function addAlert123(){
+    if(!scene.main.alert.length){
+        for(var n=0;n < 3; n++){
+            s = drawOne();
+            scene.main.alert.push(s);
+            s.scaleX = 0.7;
+            s.scaleY = 0.7;
+            s.x = 120 + 160 * n;
+            s.y = 50;
+            s.visible = false;
+            scene.main.addChild(s);
+        }
+    }
+
+}
+
 
 
 function drawMap(){
@@ -192,7 +208,7 @@ function drawMap(){
 
     //进入选择入口场景
     UI.scene("start");
-    sound.bg.play();
+    //sound.bg.play();
 }
 
 
@@ -260,16 +276,7 @@ function prepareScene(){
 
     var s;
     scene.main.alert = [];
-    for(var n=0;n < 3; n++){
-        s = drawOne();
-        scene.main.alert.push(s);
-        s.scaleX = 0.7;
-        s.scaleY = 0.7;
-        s.x = 120 + 160 * n;
-        s.y = 50;
-        s.visible = false;
-        scene.main.addChild(s);
-    }
+
 
     scene.main.foot = new Bitmap(img.foot);
     scene.main.foot.x = 0;
@@ -821,6 +828,8 @@ function bossStartLR(){
 
 function showAlert123(i){
 
+    addAlert123();
+
     //显示 123 的预警
     for(var n=0, nmax = scene.main.alert.length; n<nmax; n++){
         if(n + 1 <= i){
@@ -830,7 +839,7 @@ function showAlert123(i){
             scene.main.alert[n].visible = false;
         }
     }
-    console.log("Alert " + num);
+    console.log("Alert " + i);
 }
 function hideAlert123(){
     //隐藏 123 的预警
@@ -848,7 +857,9 @@ function bossStopLR(){
 var hasDraw123;
 
 function drawOne(){
-    var s = new Bitmap(img.btn123);
+    var iAmBoss = Role.id === null;
+
+    var s = new Bitmap(iAmBoss ? img.btn123 : img.btn123_w);
     // var s = new Shape();
     // var g = s.graphics;
     // //Head

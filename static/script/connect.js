@@ -174,6 +174,15 @@ function connectSocket(){
         }
     });
 
+    socket.on("willingShow", function(data){
+        if(Role.id === null){
+            return;
+        }
+        if(data){
+            UI.woodAlert123(parseInt(data, 10))
+        }
+    })
+
     socket.on('win',function(data){
         showScene('win');
         if(data == -1){
@@ -184,9 +193,13 @@ function connectSocket(){
     });
 
     socket.on('twistBackBody',function(){
+        
         showBoss("back");
         if(Role.current == 'boss'){
             UI.bossStartClick();
+        }
+        else{
+            UI.woodAlertClear();
         }
     });
 
