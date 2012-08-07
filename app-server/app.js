@@ -195,6 +195,7 @@ sockets.on('connection',function(socket){
                 if(Timer){clearInterval(Timer);Timer = null;}
 
                 Timer = setInterval(function(){
+                    if(Finish){return false;}
                     if(lim <=0){clearInterval(Timer);Timer = null;Finish=true;socket.emit('win',-1);socket.broadcast.emit('win',-1)}
                     socket.emit('remainTime',lim);
                     socket.broadcast.emit('remainTime',lim);
