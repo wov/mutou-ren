@@ -49,20 +49,20 @@ var INTERFACES_ON = {
     	'desc' : '添加用户，若collection为空，表明未初始化，返回noinit，如果gameParams.collection.wooder长度大于2 \
     	表明人数已满，返回－1,其他，返回添加的用户对象'
     } ,
-    'playerNum' : {
-        'character' : '',
-        'role' : '',
-        'desc' : '获得当前连接到服务器的人数',
-        'statge' : 'choose',
-        'broadcast' : true
-    },
-    'roomNum' : {
-        'character' : '',
-        'role' : '',
-        'desc' : '获得当前服务器上的房间数量',
-        'statge' : 'choose',
-        broadcast : true
-    },
+//    'playerNum' : {
+//        'character' : '',
+//        'role' : '',
+//        'desc' : '获得当前连接到服务器的人数',
+//        'statge' : 'choose',
+//        'broadcast' : true
+//    },
+//    'roomNum' : {
+//        'character' : '',
+//        'role' : '',
+//        'desc' : '获得当前服务器上的房间数量',
+//        'statge' : 'choose',
+//        broadcast : true
+//    },
     'start' : {
         'character' : '1p',
         'role' : 'all',
@@ -101,7 +101,13 @@ var INTERFACES_ON = {
     },
     'restart' : {
         'desc' : '重启游戏'
-    }
+    },
+    'remainTime' : {
+        'desc' : '得到剩余的倒计时。'
+    },
+    'timeUp' : {
+        'desc' : '时间到。'
+    },
 };
 
 //客户端发送的接口定义

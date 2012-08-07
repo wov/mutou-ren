@@ -34,7 +34,7 @@ app.configure('production', function(){
 });
 
 // Routes
-app.get('/', routes.index);
+//app.get('/', routes.index);
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
@@ -42,6 +42,7 @@ app.listen(3000, function(){
 
 var sio = io.listen(app);
 var sockets = sio.sockets;
+var Timer = null;
 
 var connectUtils = require('connect').utils;
 var parseSignedCookie = connectUtils.parseSignedCookie;
@@ -77,7 +78,7 @@ sockets.on('connection',function(socket){
 			console.log("init gameParams");
 			//init gameParams
 			gameParams = {
-					config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:60},
+					config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:45},
 					gameStatus:{winner:0,currentTime:0,status:3,lastWalkId:0,lastWalkRoleId:0,turnLock:false},
 					role:{
 				      	1:{name:'role1',source:'01'},
@@ -93,7 +94,7 @@ sockets.on('connection',function(socket){
 							turnWilling:false,
 							turning:false
 						},
-						wooder:[],
+						wooder:[]
 					}
 			};	
 		}
@@ -200,12 +201,21 @@ sockets.on('connection',function(socket){
 				gameParams.collection.watcher.id = -1; //id -1 BOSS
 				gameParams.collection.watcher.session = socket.handshake.sessionID;
 
-
 				var newRoleWatcher = gameParams.collection.watcher;
 				socket.broadcast.emit('addPerson',newRoleWatcher);
 
 				socket.emit('success',newRoleWatcher);
 				console.info("add watcher success, watch property:",newRoleWatcher);
+
+                var lim = gameParams.config.gameTimeLimit;
+                if(Timer){clearInterval(Timer);Timer = null;}
+
+                Timer = setInterval(function(){
+                    if(lim <=0){clearInterval(Timer);Timer = null;}
+                    socket.emit('remainTime',lim);
+                    socket.broadcast.emit('remainTime',lim);
+                    lim--;
+                },1000);
 
 			}else{
 				gameParams.gameStatus.status = 1;
@@ -286,8 +296,7 @@ sockets.on('connection',function(socket){
 			return;
 		}
 	});
-	
-	
+
 	socket.on("confirmTurn",function(data){
 		if(data == 1 && gameParams && gameParams.gameStatus){
 			gameParams.gameStatus.turnLock = true;
