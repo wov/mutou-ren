@@ -43,6 +43,7 @@ app.listen(3000, function(){
 var sio = io.listen(app);
 var sockets = sio.sockets;
 var Timer = null;
+var Finish = null;
 
 var connectUtils = require('connect').utils;
 var parseSignedCookie = connectUtils.parseSignedCookie;
@@ -139,6 +140,7 @@ sockets.on('connection',function(socket){
     //重启游戏。
     socket.on('restart',function(){
         gameParams = null;
+        Finish = null;
         statusList = [-1,1,2,3];
 
         socket.emit("restart",null);
@@ -147,30 +149,9 @@ sockets.on('connection',function(socket){
 
 	//get availablePerson
 	socket.on('availablePerson',function(data){
+        if(Finish){return false;}
 		console.info('check is any available person?');
 		//return boss and woodman status
-
-
-//		if(!!gameParams.collection.watcher && gameParams.collection.watcher.id == 0){ // if watcher.id==0 that means we can choose this role
-//			statusList.push(-1);
-//		}
-//		var wooders = gameParams.collection.wooder;
-//		console.log(wooders);
-//		var allwooders = [1,2,3];
-//
-//		if (wooders.length > 0){
-//			var woodersList = [];
-//			for (var i=0;i<wooders.length;i++){
-//				woodersList.push(wooders[i].roleId);
-//			}
-//			for (var j=0;j<allwooders.length;j++) {
-//				if (woodersList.indexOf(allwooders[j].toString()) == -1){
-//					statusList.push(allwooders[j]);
-//				}
-//			}
-//		}else{
-//			statusList = statusList.concat(allwooders);
-//		}
 
 		socket.emit("availablePerson",statusList);
 		return;
@@ -178,7 +159,10 @@ sockets.on('connection',function(socket){
 	
 	//add person
 	socket.on('addPerson',function(data){
+        if(Finish){return false;}
+
 		//check wheather game init?
+
 		console.info("recieve add Person Request and Deal With It");
 		if((gameParams && !gameParams.collection) || !gameParams){
 			socket.emit('addPerson',"NoInit");
@@ -211,7 +195,7 @@ sockets.on('connection',function(socket){
                 if(Timer){clearInterval(Timer);Timer = null;}
 
                 Timer = setInterval(function(){
-                    if(lim <=0){clearInterval(Timer);Timer = null;}
+                    if(lim <=0){clearInterval(Timer);Timer = null;Finish=true;socket.emit('win',-1);socket.broadcast.emit('win',-1)}
                     socket.emit('remainTime',lim);
                     socket.broadcast.emit('remainTime',lim);
                     lim--;
@@ -238,6 +222,8 @@ sockets.on('connection',function(socket){
 	});
 	
 	socket.on("walk",function(data){
+        if(Finish){return false;}
+
 		console.log("walk object:",gameParams);
 
         if('object' !== typeof(data) || !gameParams || (gameParams && !gameParams.config)){return;}
@@ -266,6 +252,7 @@ sockets.on('connection',function(socket){
 			gameParams.gameStatus.status = 2;
 			socket.broadcast.emit('win',roleId);
 			socket.emit('win',roleId);
+            Finish = true;
 			return;
 		}
 		console.log("calculate position: ",	gameParams.collection.wooder[roleId-1].position );
@@ -280,6 +267,8 @@ sockets.on('connection',function(socket){
 	})
 
 	socket.on('willingBegin',function(data){
+        if(Finish){return false;}
+
 		if(data == 1 && gameParams && gameParams.collection){
 			gameParams.collection.watcher.turnWilling = true;
 			gameParams.collection.watcher.turnWillingTimeStamp = new Date().getTime();
@@ -289,6 +278,8 @@ sockets.on('connection',function(socket){
 		}
 	});
 	socket.on('willingCancel',function(data){
+        if(Finish){return false;}
+
 		if(gameParams && gameParams.gameStatus){
 			gameParams.gameStatus.turnLock = false;
 			socket.broadcast.emit("twistBackBody","1");
@@ -298,6 +289,8 @@ sockets.on('connection',function(socket){
 	});
 
 	socket.on("confirmTurn",function(data){
+        if(Finish){return false;}
+
 		if(data == 1 && gameParams && gameParams.gameStatus){
 			gameParams.gameStatus.turnLock = true;
 			for(var i= 0; i< gameParams.collection.wooder.length; i++){
@@ -321,6 +314,8 @@ sockets.on('connection',function(socket){
 	});
 
 	socket.on("willing",function(data){
+        if(Finish){return false;}
+
 		//转头
 		if(data == 1 && gameParams && gameParams.collection){
 			gameParams.collection.watcher.turnWilling = true;
