@@ -30,12 +30,13 @@ var img = {}, sound = {},
         "wood_3_walk",
         "foot",
         "btn123",
+        "btn123_w",
         "selected"
 
     ],
     soundNames = [
-        'cow',
-        'bg'
+        //'cow',
+        //'bg'
     ];
 
 
