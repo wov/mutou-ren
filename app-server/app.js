@@ -285,7 +285,6 @@ sockets.on('connection',function(socket){
 			socket.emit("twistBackBody","1");
 			return;
 		}
-
 	});
 	
 	
