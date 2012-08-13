@@ -109,9 +109,10 @@ function initWooder(){
     var d_canvas = document.getElementById('canvas');
     if("ontouchstart" in window){
         d_canvas.addEventListener('touchstart',function(e){
+
             var point  = {};
-            point.x = e.pageX;
-            point.y = e.pageY;
+            point.x = e.targetTouches[0].pageX;
+            point.y = e.targetTouches[0].pageY;
 
             var clickArea;
 
