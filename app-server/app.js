@@ -142,7 +142,7 @@ sockets.on('connection',function(socket){
         gameParams = null;
         Finish = null;
         statusList = [-1,1,2,3];
-
+        Timer = null;
         socket.emit("restart",null);
         socket.broadcast.emit("restart",null);
     });
@@ -195,7 +195,7 @@ sockets.on('connection',function(socket){
                 if(Timer){clearInterval(Timer);Timer = null;}
 
                 Timer = setInterval(function(){
-                    if(Finish){return false;}
+                    if(Finish){clearInterval(Timer);Timer = null;return false;}
                     if(lim <=0){clearInterval(Timer);Timer = null;Finish=true;socket.emit('win',-1);socket.broadcast.emit('win',-1)}
                     socket.emit('remainTime',lim);
                     socket.broadcast.emit('remainTime',lim);
