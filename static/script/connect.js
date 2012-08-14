@@ -181,7 +181,7 @@ function connectSocket(){
         if(data){
             UI.woodAlert123(parseInt(data, 10))
         }
-    })
+    });
 
     socket.on('win',function(data){
         showScene('win');
@@ -201,6 +201,11 @@ function connectSocket(){
         else{
             UI.woodAlertClear();
         }
+    });
+
+    socket.on('remainTime',function(lim){
+        
+        UI.time(lim);
     });
 
 }

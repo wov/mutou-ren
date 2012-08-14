@@ -79,7 +79,7 @@ sockets.on('connection',function(socket){
 			console.log("init gameParams");
 			//init gameParams
 			gameParams = {
-					config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:45},
+					config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:30},
 					gameStatus:{winner:0,currentTime:0,status:3,lastWalkId:0,lastWalkRoleId:0,turnLock:false},
 					role:{
 				      	1:{name:'role1',source:'01'},
@@ -142,6 +142,7 @@ sockets.on('connection',function(socket){
         gameParams = null;
         Finish = null;
         statusList = [-1,1,2,3];
+        clearInterval(Timer);
         Timer = null;
         socket.emit("restart",null);
         socket.broadcast.emit("restart",null);

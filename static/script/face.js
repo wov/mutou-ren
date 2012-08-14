@@ -146,7 +146,7 @@ function initDraw(){
         woodMan[n] = {};
         woodMan[n].img = {
             small_back:img["wood_" + nI + "s_b"],
-            small_face:img["wood_" + nI + "s_f"],
+            small_face:img["kulou"],
             walk:img["wood_" + nI + "_walk"],
             sele:img["selec_" + nI],
             big:img["wood_" + nI + "b"]
@@ -178,8 +178,8 @@ function addAlert123(){
             scene.main.alert.push(s);
             s.scaleX = 0.7;
             s.scaleY = 0.7;
-            s.x = 120 + 160 * n;
-            s.y = 50;
+            s.x = 130 + 160 * n;
+            s.y = 80;
             s.visible = false;
             scene.main.addChild(s);
         }
@@ -283,6 +283,18 @@ function prepareScene(){
     scene.main.foot.y = 650;
     //scene.main.foot.visible = false;
     scene.main.addChild(scene.main.foot);
+
+
+    scene.main.time = new Bitmap(img.interval);
+    scene.main.time.regX = 64;
+    scene.main.time.x = 320;
+    scene.main.addChild(scene.main.time);
+
+    scene.main.timestep = new Text("", "48px bold Arial", "#FFF");
+    scene.main.timestep.x = 320;
+    scene.main.timestep.y = 40;
+    scene.main.timestep.textAlign = "center";
+    scene.main.addChild(scene.main.timestep);
 
     //main-------------->>
 
@@ -432,6 +444,10 @@ function prepareScene(){
 
 
 
+}
+
+function setTimestep(num){
+    scene.main.timestep.text = num;
 }
 
 function roleSelete(name, unmsg){
@@ -653,8 +669,8 @@ function addWood(n){
     woodMan[n].face = man;
     woodMan[n].face.y = woodMan[n].oriY = 940;
     woodMan[n].face.x = woodMan[n].oriX = 100 + 210*n;
-    woodMan[n].face.regX = 94;
-    woodMan[n].face.regY = 214;
+    woodMan[n].face.regX = 78;
+    woodMan[n].face.regY = 196;
     woodMan[n].face.visible = false;
 
 

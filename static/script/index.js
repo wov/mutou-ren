@@ -31,6 +31,8 @@ var img = {}, sound = {},
         "foot",
         "btn123",
         "btn123_w",
+        "interval",
+        "kulou",
         "selected"
 
     ],

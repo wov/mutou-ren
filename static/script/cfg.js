@@ -304,6 +304,9 @@ var UI = {
 
         UI.scene("main");
 
+    },
+    time:function(num){
+        setTimestep(num);
     }
 }
 
