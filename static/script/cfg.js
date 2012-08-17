@@ -278,6 +278,14 @@ var UI = {
      * @param {String|Number} name 角色id，“boss”｜0｜1｜2
      */
     roleSelete : function(name){
+        if(name !== "boss"){
+            scene.main.foot_r.visible = true;
+            scene.main.foot_l.visible = true;
+
+
+        }
+        Role.id = "boss";
+
         //some code...
         switch(name){
             case 'boss' :
@@ -307,6 +315,24 @@ var UI = {
     },
     time:function(num){
         setTimestep(num);
+    },
+    //行走的视觉提示
+    walk_right_start:function(){
+        scene.main.foot_r.alpha = 1;
+        scene.main.addChild(scene.main.foot_r);
+    },
+    walk_left_start:function(){
+        scene.main.foot_l.alpha = 1;
+        scene.main.addChild(scene.main.foot_l);
+    },
+        //行走的视觉提示
+    walk_right_end:function(){
+        scene.main.foot_r.alpha = 0.6;
+        scene.main.addChild(scene.main.foot_r);
+    },
+    walk_left_end:function(){
+        scene.main.foot_l.alpha = 0.6;
+        scene.main.addChild(scene.main.foot_l);
     }
 }
 

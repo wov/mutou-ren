@@ -278,16 +278,25 @@ function prepareScene(){
     scene.main.alert = [];
 
 
-    scene.main.foot = new Bitmap(img.foot);
-    scene.main.foot.x = 0;
-    scene.main.foot.y = 650;
-    //scene.main.foot.visible = false;
-    scene.main.addChild(scene.main.foot);
+    scene.main.foot_l = new Bitmap(img.foot_l_a);
+    scene.main.foot_l.x = 0;
+    scene.main.foot_l.y = 650;
+    scene.main.foot_l.alpha = 0.6;
+    scene.main.foot_l.visible = false;
+    scene.main.addChild(scene.main.foot_l);
+
+    scene.main.foot_r = new Bitmap(img.foot_r_a);
+    scene.main.foot_r.x = 640-203;
+    scene.main.foot_r.y = 650;
+    scene.main.foot_r.alpha = 0.6;
+    scene.main.foot_r.visible = false;
+    scene.main.addChild(scene.main.foot_r);
 
 
     scene.main.time = new Bitmap(img.interval);
     scene.main.time.regX = 64;
     scene.main.time.x = 320;
+
     scene.main.addChild(scene.main.time);
 
     scene.main.timestep = new Text("", "48px bold Arial", "#FFF");
@@ -621,7 +630,38 @@ function addBoss(){
     faceman.visible = false;
     scene.main.addChild(faceman);
 
+    console.log("dffd " + Role.id)
+    if(Role.id === "boss"){
+
+
+
+        bossMan.arrow = new Bitmap(img.role_arrow);
+        bossMan.arrow.regX = 24;
+        bossMan.arrow.regY = 0;
+
+        bossMan.arrow.x = 320;
+        bossMan.arrow.y = 110;
+        bossMan.arrow.shadow = new Shadow("#454", 0, 0, 4);
+        scene.main.addChild(bossMan.arrow);
+        
+        (function(){
+                if( bossMan.arrow.regY == 20){
+                    bossMan.arrow.anim("regY", 0, 60, arguments.callee);
+                }
+                else{
+                    bossMan.arrow.anim("regY", 20, 60, arguments.callee);
+                }
+                
+
+            
+        })();
+
+    }
+
     bossHasInit = true;
+
+
+
 
     console.log("Boss come in! attention.")
 }
@@ -673,6 +713,29 @@ function addWood(n){
     woodMan[n].face.regY = 196;
     woodMan[n].face.visible = false;
 
+//console.log("role.id " +  Role.id)
+    if(Role.id == (n + 1)){
+        woodMan[n].arrow = new Bitmap(img.role_arrow);
+        woodMan[n].arrow.regX = 24;
+        woodMan[n].arrow.regY = 240;
+
+        woodMan[n].arrow.x = 100 + 210*n;
+        woodMan[n].arrow.y = 940;
+        woodMan[n].arrow.shadow = new Shadow("#454", 0, 0, 4);
+        scene.main.addChild(woodMan[n].arrow);
+        
+        (function(){
+                if( woodMan[n].arrow.regY == 260){
+                    woodMan[n].arrow.anim("regY", 240, 60, arguments.callee);
+                }
+                else{
+                    woodMan[n].arrow.anim("regY", 260, 60, arguments.callee);
+                }
+                
+
+            
+        })();
+    }
 
     /*
     var backman = new Bitmap(woodMan[n].img.small_back);
@@ -756,9 +819,9 @@ function showWood(n, dis, noAni){
 //设置图形显示属性
 function setWood(n, type, value){
     if(woodMan[n].face && woodMan[n].back){
-
-        woodMan[n].face[type] = woodMan[n].face[type] = 
-        woodMan[n].back[type] = woodMan[n].back[type] = value;
+        
+        woodMan[n].face[type] =  
+        woodMan[n].back[type] = value;
     }
 
 }
@@ -771,6 +834,7 @@ function setWoodAnim(n, type, value, animTime, execCallback){
         woodMan[n].back.stop();
     } : null);
     woodMan[n].face.anim(type, value, animTime);
+    woodMan[n].arrow && woodMan[n].arrow.anim(type, value, animTime)
 }
 
 //获取参数
@@ -843,6 +907,11 @@ function bossStartLR(){
 }
 
 function showAlert123(i){
+
+    if(Role.id === "boss"){
+        hideAlert123();
+        return;
+    }
 
     addAlert123();
 

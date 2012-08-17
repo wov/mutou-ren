@@ -42,6 +42,7 @@ app.listen(3000, function(){
 
 var sio = io.listen(app);
 var sockets = sio.sockets;
+var GAME_TIME = 45;
 var Timer = null;
 var Finish = null;
 
@@ -79,7 +80,7 @@ sockets.on('connection',function(socket){
 			console.log("init gameParams");
 			//init gameParams
 			gameParams = {
-					config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:30},
+					config:{stepLength:2,watchTimeLimit:4,gameTimeLimit:GAME_TIME},
 					gameStatus:{winner:0,currentTime:0,status:3,lastWalkId:0,lastWalkRoleId:0,turnLock:false},
 					role:{
 				      	1:{name:'role1',source:'01'},
