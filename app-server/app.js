@@ -236,7 +236,9 @@ sockets.on('connection',function(socket){
 		var stepLength = gameParams.config.stepLength;
 		var rolePositionContainer = [];
         console.log(roleId);
-		if(gameParams.collection.wooder[roleId-1] && !gameParams.collection.wooder[roleId-1].active){
+		if(	gameParams.collection.wooder[roleId-1] && 
+			!gameParams.collection.wooder[roleId-1].active &&
+			!gameParams.collection.wooder[roleId-1].position){
 			return ;
 		}
 

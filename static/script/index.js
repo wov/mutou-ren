@@ -146,7 +146,7 @@ function initWooder(){
 
         },false);
 
-        d_canvas.addEventListener('touchend', function(){
+        d_canvas.addEventListener('touchend', function(e){
 
             var point  = {};
             point.x = e.targetTouches[0].pageX;
