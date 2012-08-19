@@ -110,7 +110,7 @@ var clickAreaRecord = [];
 function initWooder(){
 
 
-    var d_canvas = document.getElementById('canvas');
+    var d_canvas = document.body;//document.getElementById('canvas');
     if("ontouchstart" in window){
         d_canvas.addEventListener('touchstart',function(e){
 
@@ -120,7 +120,7 @@ function initWooder(){
 
             var clickArea;
 
-            if(point.x > d_canvas.width/2){
+            if(point.x > d_canvas.clientWidth/2){
                 clickArea = 'right';
             }else{
                 clickArea = 'left';
@@ -154,7 +154,7 @@ function initWooder(){
 
             var clickArea;
 
-            if(point.x > d_canvas.width/2){
+            if(point.x > d_canvas.clientWidth/2){
                 clickArea = 'right';
             }else{
                 clickArea = 'left';
